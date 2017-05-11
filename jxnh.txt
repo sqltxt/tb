@@ -1,0 +1,83 @@
+//------------------------------------------------------------------------
+// 简称: jxnh
+// 名称: 
+// 类别: 公式应用
+// 类型: 用户应用
+// 输出: Void
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+// 简称: jxnh
+// 名称: 均线粘合
+// 类别: 公式应用
+// 类型: 用户应用
+// 输出:
+//------------------------------------------------------------------------
+
+Params
+Numeric	N(0.10);		//平衡变量
+Numeric	A1(34);
+Numeric	A2(89); 
+Numeric	A3(233);
+Vars
+Numeric	MA1;
+Numeric	MA2;
+Numeric	MA3;
+Numeric	Difference;		//波动差
+NumericSeries Balance;	//平衡位
+Numeric i;
+Begin
+	if (!CallAuctionFilter()) Return;
+	if (GetGlobalVar(0) == 1) Return;
+	If(BarStatus == 0)
+	{		
+		Balance=0;
+	}
+	MA1 	= 	AverageFC(Close,A1);
+	MA2 	= 	AverageFC(Close,A2);
+	MA3 	= 	AverageFC(Close,A3);
+	Difference	=	Max(MA3,Max(MA2,MA1))-Min(MA3,Min(MA2,MA1));//最大均线-最小均线=均线差	
+	//If(MA1<>InvalidNumeric&&MA2<>InvalidNumeric&&MA3<>InvalidNumeric)
+	If(BarStatus <> 0)
+	{
+		//画线
+		PlotNumeric("MA1",MA1,0,White);
+		PlotNumeric("MA2",MA2,0,Yellow);
+		PlotNumeric("MA3",MA3,0,Red);
+		If(Difference/Min(MA3,Min(MA2,MA1))<Min(0.07,N))//N
+		{
+			//If(CurrentTime == 0.204500 or CurrentTime == 0.150000 or CurrentTime == 0.091000 or CurrentTime == 0.2154 or CurrentTime >= EndTimeDayOrNight)
+			//If(CurrentDate == Date)	
+			//If(BarCount-2==BarInterval)
+			If(Currentbar == BarCount-1)
+			{
+				PlotString("nh","均线粘合",H+10,Yellow,0);
+				//Commentary(Text(Time));
+				//Commentary(Text(CurrentTime));
+				//Commentary(Text(EndTimeDayOrNight));
+				For i = 0 To GetSessionCount() - 1 
+				{
+					Commentary(Text(GetSessionEndTime(i)));
+				}				
+				FileAppend("C:\\交易机会_"+Text(CurrentDate)+".txt","均线粘合 ： "+SymbolType+"  粘合度："+Text(round(Difference/Min(MA3,Min(MA2,MA1))*100,2))+"%");
+				SetGlobalVar(0,1);
+			}				
+		}
+	}
+End
+
+//------------------------------------------------------------------------
+// 编译版本	GS2015.12.25
+// 用户版本	2017/03/31 15:35:25
+// 版权所有	sqltxt
+// 更改声明	TradeBlazer Software保留对TradeBlazer平台
+//			每一版本的TradeBlazer公式修改和重写的权利
+//------------------------------------------------------------------------
+
+
+//------------------------------------------------------------------------
+// 编译版本:	2017/04/05 205503
+// 内核版本:	V2.3.2.10
+// 版权所有	sqltxt
+// 更改声明	TradeBlazer Software保留对TradeBlazer平台
+//			每一版本的TradeBlazer公式修改和重写的权利
+//------------------------------------------------------------------------
