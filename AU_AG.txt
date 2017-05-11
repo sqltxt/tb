@@ -1,0 +1,38 @@
+//------------------------------------------------------------------------
+// 简称: AU_AG
+// 名称: 黄金白银套利
+// 类别: 公式应用
+// 类型: 用户应用
+// 输出:
+//------------------------------------------------------------------------
+
+Params
+Numeric UP(70);
+Numeric	Down(60);
+Vars
+Numeric	N;
+Begin
+	
+	if (Data0.SymbolType <> "au") Return;
+		//PlotString("aue","主图要输入黄金合约",0,yellow,1);
+	if (data1.SymbolType <>"ag") Return;
+		//PlotString("age","付图输入白银合约",0,white,1);
+	PlotNumeric("上限",Down,0,Green);
+	PlotNumeric("下限",UP,0,Red);
+	N	=	Data0.C*1000/Data1.C;
+	PlotNumeric("金银比",N,0,White);
+	
+	if (GetGlobalVar(0) == 1 )
+		Return;
+	Else 
+		FileAppend("C:\\交易机会_"+Text(CurrentDate)+".txt","金银比 ： "+Data0.Symbol+" *1000/ "+Data1.Symbol+" = "+Text(N));
+		SetGlobalVar(0,1);
+End
+
+//------------------------------------------------------------------------
+// 编译版本	GS2015.12.25
+// 用户版本	2017/04/22 10:01:16
+// 版权所有	sqltxt
+// 更改声明	TradeBlazer Software保留对TradeBlazer平台
+//			每一版本的TradeBlazer公式修改和重写的权利
+//------------------------------------------------------------------------
