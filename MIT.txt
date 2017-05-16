@@ -1,0 +1,29 @@
+//------------------------------------------------------------------------
+// 简称: MIT
+// 名称: MIT
+// 类别: 用户函数
+// 类型: 用户函数
+// 输出: 数值型
+//------------------------------------------------------------------------
+
+// 取自Limit后三个字母
+Begin
+If 		(GetUserID=="wkjytj")		Return	99999999;//会客室
+else If	(GetUserID=="wkjy81080032")	Return	20170101;//叶绿培
+else If	(GetUserID=="wkjy81000777")	Return	20170101;//秋宇
+else If	(GetUserID=="wkjy81000010")	Return	20161001;//王文利
+else If	(GetUserID=="wkjy81000179")	Return	20161001;//边志民
+else If	(GetUserID=="jiejue1987")	Return	20170101;//陈林
+else If	(GetUserID=="lemon123")		Return	20170101;//刘署庆
+else If	(GetUserID=="wenxiyan1")	Return	20170101;//文溪焱
+else If	(GetUserID=="wkjy81000360")	Return	99999999;//秋宇
+else 								Return	0;
+End
+//调用语句 If( D>=MIT) Return;
+//------------------------------------------------------------------------
+// 编译版本	GS2010.12.08
+// 用户版本	2016-04-04 10:50:34
+// 版权所有	wkjy81080032
+// 更改声明	TradeBlazer Software保留对TradeBlazer平台
+//			每一版本的TrabeBlazer公式修改和重写的权利
+//------------------------------------------------------------------------
