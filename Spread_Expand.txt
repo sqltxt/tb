@@ -1,0 +1,55 @@
+//------------------------------------------------------------------------
+// 简称: Spread_Expand
+// 名称: 价差扩大
+// 类别: 公式应用
+// 类型: 用户应用
+// 输出:
+//------------------------------------------------------------------------
+
+Params
+Numeric	Spread_in(1);
+Numeric	Spread_out(1.5);
+Numeric Begin_Date(20160401);//开始做进去日期
+Numeric Begin_Time(090000);//开始做进去时间
+//Numeric Type(1);
+Numeric	lot(1);
+Numeric Multiple(10);
+Vars
+Numeric Spread;
+Begin
+	
+	Spread = Data0.O-Data1.O;
+	PlotNumeric("价差",Spread,0,white);
+	PlotNumeric("出场",Spread_out/Multiple,0,Red);
+	PlotNumeric("入场",Spread_in/Multiple,0,Green);
+	If (Date<Begin_Date Or (Date==Begin_Date And T<(Begin_Time/1000000))) Return;	
+	If( D>=MIT) Return;
+	If (! CallAuctionFilter()) Return;
+	If ( Spread_in>Spread_out )
+	{
+		If (CurrentBar == BarCount-10)
+		{
+			PlotString("提示","错误：入场价差>出场价差",0,Yellow);
+		}
+			Return;//基差扩大却入场>出场
+	}
+	
+If (Spread<=Spread_in/Multiple)//入场
+{
+	Data0.Buy(lot,Data0.O);
+	Data1.SellShort(lot,Data1.O);
+}
+If(Spread>=Spread_out/Multiple)//出场
+{
+	Data0.Sell(lot,Data0.O);
+	Data1.BuyToCover(lot,Data1.O);
+}
+End
+
+//------------------------------------------------------------------------
+// 编译版本	GS2015.12.25
+// 用户版本	2016/04/06 07:50:32
+// 版权所有	wkjy81080032
+// 更改声明	TradeBlazer Software保留对TradeBlazer平台
+//			每一版本的TradeBlazer公式修改和重写的权利
+//------------------------------------------------------------------------
