@@ -1,0 +1,69 @@
+//------------------------------------------------------------------------
+// 简称: Spread_sub
+// 名称: 价差
+// 类别: 公式应用
+// 类型: 用户应用
+// 输出:
+//------------------------------------------------------------------------
+
+
+Params
+Numeric UP(2000);
+Numeric	Down(400);
+Vars
+Numeric	N;
+Begin
+	
+	//if (Data0.SymbolType <> "au") Return;
+		//PlotString("aue","主图要输入黄金合约",0,yellow,1);
+	//if (data1.SymbolType <>"ag") Return;
+		//PlotString("age","付图输入白银合约",0,white,1);
+	PlotNumeric("上限",Down,0,Green);
+	PlotNumeric("下限",UP,0,Red);
+	N	=	Data0.C-Data1.C;
+	PlotNumeric("价差",N,0,White);
+	
+	
+	if (CurrentDate==Date)
+		if (Date<>Date[1])
+		{
+			SetGlobalVar(0,0);
+			PlotString("tag",Text(GetGlobalVar(0)),0);
+		}
+	
+	
+	if (GetGlobalVar(0) == 0)
+		if (CurrentTime == 0.091000 Or CurrentTime == 0.211000)
+		{
+			//FileAppend("C:\\交易机会_"+Text(CurrentDate)+".txt","金银比 ： "+"\n"+Data0.Symbol+" *1000/ "+Data1.Symbol+" = "+Text(N));
+			FileAppend("C:\\交易机会_"+Text(CurrentDate)+".txt",Data0.SymbolName+"-"+Data1.SymbolName+"合理价差:"+Text(Down)+"~"+Text(UP));
+			FileAppend("C:\\交易机会_"+Text(CurrentDate)+".txt",Data0.SymbolName+"-"+Data1.SymbolName+"当前价差:"+"\n"+Data0.Symbol+"-"+Data1.Symbol+" = "+Text(N));
+			
+			SetGlobalVar(0,1);
+			PlotString("tag","发单",0);
+		}
+	Commentary(Text(GetGlobalVar(0)));
+	
+	if (GetGlobalVar(0) == 1 )
+		Return;
+		
+	/*	
+	if (Date<>Date[1] And CurrentDate==Date)
+		SetGlobalVar(0,0);
+		
+	if (GetGlobalVar(0) == 0 And CurrentTime >= 0.091800)
+		
+		SetGlobalVar(0,1);
+	
+	if (GetGlobalVar(0) == 1 )
+		Return;
+	*/
+End
+
+//------------------------------------------------------------------------
+// 编译版本	GS2015.12.25
+// 用户版本	2017/05/15 10:47:35
+// 版权所有	sqltxt
+// 更改声明	TradeBlazer Software保留对TradeBlazer平台
+//			每一版本的TradeBlazer公式修改和重写的权利
+//------------------------------------------------------------------------

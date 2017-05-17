@@ -1,0 +1,69 @@
+//------------------------------------------------------------------------
+// 简称: HC_spread
+// 名称: 热卷盘面利润
+// 类别: 公式应用
+// 类型: 用户应用
+// 输出:
+//------------------------------------------------------------------------
+
+
+Params
+Numeric UP(1500);
+Numeric	Down(-500);
+Vars
+Numeric	N;
+Begin
+	
+	//if (Data0.SymbolType <> "au") Return;
+		//PlotString("aue","主图要输入黄金合约",0,yellow,1);
+	//if (data1.SymbolType <>"ag") Return;
+		//PlotString("age","付图输入白银合约",0,white,1);
+	PlotNumeric("上限",Down,0,Green);
+	PlotNumeric("下限",UP,0,Red);
+	N	=	Data0.C-Data1.C*1.6-Data2.C*0.5-600;
+	PlotNumeric("利润",N,0,White);
+	
+	
+	if (CurrentDate==Date)
+		if (Date<>Date[1])
+		{
+			SetGlobalVar(0,0);
+			PlotString("tag",Text(GetGlobalVar(0)),0);
+		}
+	
+	
+	if (GetGlobalVar(0) == 0)
+		if (CurrentTime == 0.110000 Or CurrentTime == 0.211200)
+		{
+			FileAppend("C:\\交易机会_"+Text(CurrentDate)+".txt","热卷板合理盘面利润:"+"\n"+Text(Down)+"~"+Text(UP));
+			FileAppend("C:\\交易机会_"+Text(CurrentDate)+".txt","当前盘面利润:"+"\n"+Data0.SymbolName+"-"+Data1.SymbolName+"*1.6-"+data2.SymbolName+"*0.5-600"+" = "+Text(N));
+			
+			SetGlobalVar(0,1);
+			PlotString("tag","发单",0);
+		}
+	Commentary(Text(GetGlobalVar(0)));
+	
+	if (GetGlobalVar(0) == 1 )
+		Return;
+		
+	/*	
+	if (Date<>Date[1] And CurrentDate==Date)
+		SetGlobalVar(0,0);
+		
+	if (GetGlobalVar(0) == 0 And CurrentTime >= 0.091800)
+		
+		SetGlobalVar(0,1);
+	
+	if (GetGlobalVar(0) == 1 )
+		Return;
+	*/
+End
+
+
+//------------------------------------------------------------------------
+// 编译版本	GS2015.12.25
+// 用户版本	2017/05/16 10:48:47
+// 版权所有	sqltxt
+// 更改声明	TradeBlazer Software保留对TradeBlazer平台
+//			每一版本的TradeBlazer公式修改和重写的权利
+//------------------------------------------------------------------------
