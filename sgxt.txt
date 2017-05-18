@@ -1,0 +1,553 @@
+//------------------------------------------------------------------------
+// 简称: sgxt
+// 名称: 四轨止盈进出规则修改版
+// 类别: 公式应用
+// 类型: 用户应用
+// 输出: Void
+//------------------------------------------------------------------------
+
+Params
+	//此处添加参数
+	Numeric length(120);
+	Numeric n(29);
+	Numeric lot(1);
+	Numeric b(2);
+	Numeric b_g(4.7);
+	Numeric bfb_z_d(1);
+//	Numeric bfb_z_k(1);
+Vars
+	//此处添加变量
+	numeric st;
+	numeric et;
+	Numeric i;
+	Numeric r;
+	Numeric hv;
+	Numeric bc;
+	Numeric bf;//内轨是否开仓
+	Numeric sf;//外轨是否平仓
+	NumericSeries s;
+	NumericSeries s_g;
+	
+	Numeric bc_k;
+	Numeric bf_k;
+	Numeric sf_k;
+	NumericSeries x;
+	NumericSeries x_g;
+	
+	Numeric p;
+	Numeric cb;
+	Numeric cb_k;
+	Numeric bfb_z_k;
+	
+	
+	String str;
+	string filename;
+	Numeric val;
+	String hh;
+Begin
+	bfb_z_k=bfb_z_d;
+	//此处添加代码正文
+	
+	If (!CallAuctionFilter()) Return;
+	st=20100101;
+    et=20171230;
+/* if (GetUserID!="wkjy81000777" Or CurrentDate>=et Or 10000*Year+100*Month+Day>=et Or CurrentDate<=st Or 10000*Year+100*Month+Day<=st )
+{Return;}*/
+
+	If(CurrentBar==0)
+	{
+		SetGlobalVar(0,0);
+		SetGlobalVar(1,-1);
+		
+		SetGlobalVar(3,0);
+		SetGlobalVar(4,-1);
+		
+		SetGlobalVar(6,0);
+		SetGlobalVar(7,0);
+		SetGlobalVar(8,0);
+		SetGlobalVar(9,0);
+		SetGlobalVar(10,0);
+	}
+	r=0;
+	For i = 1 to n
+	{
+		r=r+(Ln(c[i]/c[i+1])-Ln(c[1]/c[n+1])/n)^2;
+	}
+	hv=(r/(n-1))^0.5;//这应该是除以n才对：hv=(r/(n-1))^0.5
+	p=Average(Close[1],Length);
+	s=p*(1+hv)^b;
+	s_g=p*(1+hv)^b_g;
+	x=p*(1-hv)^b;
+	x_g=p*(1-hv)^b_g;
+	PlotNumeric("上轨",s);
+	PlotNumeric("高阶上轨",s_g);
+	PlotNumeric("下轨",x);
+	PlotNumeric("高阶下轨",x_g);
+	if(CurrentBar!=GetGlobalVar(6))
+	{
+		SetGlobalVar(6,CurrentBar);
+		SetGlobalVar(7,0);
+		While(1==1)
+		{
+			bc=GetGlobalVar(0);
+			bf=GetGlobalVar(1);
+			sf=GetGlobalVar(2);
+			cb=GetGlobalVar(8);
+			If(bc==0 and bf!=1 and l[1]>s_g[1] and o[1]<=c[1])
+			{
+				SetGlobalVar(7,1);
+//				Buy(lot,o);
+				bc=lot;
+				SetGlobalVar(0,bc);
+				sf=1;
+				SetGlobalVar(2,sf);
+				bf=1;
+				SetGlobalVar(1,bf);
+				SetGlobalVar(10,0);
+//				Return;
+				break;
+			}
+			If(bc==0 and bf!=1 and l[2]>s_g[2] and o[2]>c[2] and h[1]>=s_g[1] and c[1]>x[1])
+			{
+				SetGlobalVar(7,1);
+//				Buy(lot,o);
+				bc=lot;
+				SetGlobalVar(0,bc);
+				sf=1;
+				SetGlobalVar(2,sf);
+				bf=1;
+				SetGlobalVar(1,bf);
+				SetGlobalVar(10,0);
+//				Return;
+				break;
+			}
+			If(bc==0 and bf==-1 and l[1]>s[1] and o[1]<=c[1])
+			{
+				SetGlobalVar(7,1);
+//				Buy(lot,o);
+				bc=lot;
+				SetGlobalVar(0,bc);
+				bf=0;
+				SetGlobalVar(1,bf);
+				SetGlobalVar(10,0);
+				If(l[1]<=s_g[1])
+				{
+					sf=0;
+					SetGlobalVar(2,sf);
+				}
+				else
+				{
+					sf=1;
+					SetGlobalVar(2,sf);
+				}
+//				Return;
+				break;
+			}
+			If(bc==0 and bf==-1 and l[2]>s[2] and o[2]>c[2] and h[1]>s[1] and c[1]>x[1])
+			{
+				SetGlobalVar(7,1);
+//				Buy(lot,o);
+				bc=lot;
+				SetGlobalVar(0,bc);
+				bf=0;
+				SetGlobalVar(1,bf);
+				SetGlobalVar(10,0);
+				If(l[1]<=s_g[1])
+				{
+					sf=0;
+					SetGlobalVar(2,sf);
+				}
+				else
+				{
+					sf=1;
+					SetGlobalVar(2,sf);
+				}
+//				Return;
+				break;
+			}
+			If(bc!=0 and sf==1 and h[1]<s_g[1] and c[1]<=o[1])
+			{
+				SetGlobalVar(7,2);
+//				Sell(bc,o);
+				bc=0;
+				SetGlobalVar(0,bc);
+				sf=0;
+				SetGlobalVar(2,sf);
+				cb=0;
+				SetGlobalVar(8,cb);
+				SetGlobalVar(10,0);
+				If(h[1]>=s[1])
+				{
+					bf=0;
+					SetGlobalVar(1,bf);
+				}
+				else
+				{
+					bf=-1;
+					SetGlobalVar(1,bf);
+				}
+//				Return;
+				break;
+			}
+			If(bc!=0 and sf==1 and h[2]<s_g[2] and c[2]>o[2] and l[1]<=s_g[1])
+			{
+				SetGlobalVar(7,2);
+//				Sell(bc,o);
+				bc=0;
+				SetGlobalVar(0,bc);
+				sf=0;
+				SetGlobalVar(2,sf);
+				cb=0;
+				SetGlobalVar(8,cb);
+				SetGlobalVar(10,0);
+				If(h[1]>=s[1])
+				{
+					bf=0;
+					SetGlobalVar(1,bf);
+				}
+				else
+				{
+					bf=-1;
+					SetGlobalVar(1,bf);
+				}
+//				Return;
+				break;
+			}
+			If(bc!=0 and h[1]<s[1] and o[1]>=c[1])
+			{
+				SetGlobalVar(7,2);
+//				Sell(bc,o);
+				bc=0;
+				SetGlobalVar(0,bc);
+				bf=-1;
+				SetGlobalVar(1,bf);
+				sf=-1;
+				SetGlobalVar(2,sf);
+				cb=0;
+				SetGlobalVar(8,cb);
+				SetGlobalVar(10,0);
+//				Return;
+				break;
+			}
+			If(bc!=0 and h[2]<s[2] and o[2]<c[2] and l[1]<=s[1])
+			{
+				SetGlobalVar(7,2);
+//				Sell(bc,o);
+				bc=0;
+				SetGlobalVar(0,bc);
+				bf=-1;
+				SetGlobalVar(1,bf);
+				sf=-1;
+				SetGlobalVar(2,sf);
+				cb=0;
+				SetGlobalVar(8,cb);
+				SetGlobalVar(10,0);
+//				Return;
+				break;
+			}
+			If(bf!=-1 and bc==0 and  h[1]<s[1])
+			{
+				bf=-1;
+				SetGlobalVar(1,bf);
+			}
+			If(bf==1 and bc==0 and  h[1]<s_g[1])
+			{
+				bf=0;
+				SetGlobalVar(1,bf);
+			}
+			If(sf!=1 and bc!=0 and l[1]>s_g[1])
+			{
+				sf=1;
+				SetGlobalVar(2,sf);
+			}
+			if(bc!=0 and cb==0)
+			{
+				SetGlobalVar(8,EntryPrice);
+			}
+//-----------------------------------------------
+//+++++++++++++++++++++++++++++++++++++++++++++++
+			bc_k=GetGlobalVar(3);
+			bf_k=GetGlobalVar(4);
+			sf_k=GetGlobalVar(5);
+			cb_k=GetGlobalVar(9);
+			If(bc_k==0 and bf_k!=1 and h[1]<x_g[1] and o[1]>=c[1])
+			{
+				SetGlobalVar(7,3);
+//				SellShort(lot,o);
+				bc_k=lot;
+				SetGlobalVar(3,bc_k);
+				sf_k=1;
+				SetGlobalVar(5,sf_k);
+				bf_k=1;
+				SetGlobalVar(4,bf_k);
+				SetGlobalVar(10,0);
+//				Return;	
+				break;	
+			}
+			If(bc_k==0 and bf_k!=1 and h[2]<x_g[2] and o[2]<c[2] and l[1]<=s_g[1] and c[1]<s[1])
+			{
+				SetGlobalVar(7,3);
+//				SellShort(lot,o);
+				bc_k=lot;
+				SetGlobalVar(3,bc_k);
+				sf_k=1;
+				SetGlobalVar(5,sf_k);
+				bf_k=1;
+				SetGlobalVar(4,bf_k);
+				SetGlobalVar(10,0);
+//				Return;	
+				break;	
+			}
+			If(bc_k==0 and bf_k==-1 and h[1]<x[1] and o[1]>=c[1])
+			{
+				SetGlobalVar(7,3);
+//				SellShort(lot,o);
+				bc_k=lot;
+				SetGlobalVar(3,bc_k);
+				bf_k=0;
+				SetGlobalVar(4,bf_k);
+				SetGlobalVar(10,0);
+				If(h[1]>=x_g[1])
+				{
+					sf_k=0;
+					SetGlobalVar(5,sf_k);
+				}
+				else
+				{
+					sf_k=1;
+					SetGlobalVar(5,sf_k);
+				}
+//				Return;
+				break;
+			}
+			If(bc_k==0 and bf_k==-1 and h[2]<x[2] and o[2]<c[2] and l[1]<=x[1] and c[1]<s[1])
+			{
+				SetGlobalVar(7,3);
+//				SellShort(lot,o);
+				bc_k=lot;
+				SetGlobalVar(3,bc_k);
+				bf_k=0;
+				SetGlobalVar(4,bf_k);
+				SetGlobalVar(10,0);
+				If(h[1]>=x_g[1])
+				{
+					sf_k=0;
+					SetGlobalVar(5,sf_k);
+				}
+				else
+				{
+					sf_k=1;
+					SetGlobalVar(5,sf_k);
+				}
+//				Return;
+				break;
+			}
+			If(bc_k!=0 and sf_k==1 and l[1]>x_g[1] and c[1]>=o[1])
+			{
+				SetGlobalVar(7,4);
+//				BuyToCover(bc_k,o);
+				bc_k=0;
+				SetGlobalVar(3,bc_k);
+				sf_k=0;
+				SetGlobalVar(5,sf_k);
+				cb_k=0;
+				SetGlobalVar(9,cb_k);
+				SetGlobalVar(10,0);
+				If(l[1]<=x[1])
+				{
+					bf_k=0;
+					SetGlobalVar(4,bf_k);
+				}
+				else
+				{
+					bf_k=-1;
+					SetGlobalVar(4,bf_k);
+				}
+//				Return;
+				break;
+			}
+			If(bc_k!=0 and sf_k==1 and l[2]>x_g[2] and c[2]<o[2] and h[1]>=x_g[1])
+			{
+				SetGlobalVar(7,4);
+//				BuyToCover(bc_k,o);
+				bc_k=0;
+				SetGlobalVar(3,bc_k);
+				sf_k=0;
+				SetGlobalVar(5,sf_k);
+				cb_k=0;
+				SetGlobalVar(9,cb_k);
+				SetGlobalVar(10,0);
+				If(l[1]<=x[1])
+				{
+					bf_k=0;
+					SetGlobalVar(4,bf_k);
+				}
+				else
+				{
+					bf_k=-1;
+					SetGlobalVar(4,bf_k);
+				}
+//				Return;
+				break;
+			}
+			If(bc_k!=0 and l[1]>x[1] and c[1]>=o[1])
+			{
+				SetGlobalVar(7,4);
+//				BuyToCover(bc_k,o);
+				bc_k=0;
+				SetGlobalVar(3,bc_k);
+				bf_k=-1;
+				SetGlobalVar(4,bf_k);
+				sf_k=-1;
+				SetGlobalVar(5,sf_k);
+				cb_k=0;
+				SetGlobalVar(9,cb_k);
+				SetGlobalVar(10,0);
+//				Return;
+				break;
+			}
+			If(bc_k!=0 and l[2]>x[2] and c[2]<o[2] and h[1]>=x[1])
+			{
+				SetGlobalVar(7,4);
+//				BuyToCover(bc_k,o);
+				bc_k=0;
+				SetGlobalVar(3,bc_k);
+				bf_k=-1;
+				SetGlobalVar(4,bf_k);
+				sf_k=-1;
+				SetGlobalVar(5,sf_k);
+				cb_k=0;
+				SetGlobalVar(9,cb_k);
+				SetGlobalVar(10,0);
+//				Return;
+				break;
+			}
+			If(bf_k!=-1 and bc_k==0 and  l[1]>x[1])
+			{
+				bf_k=-1;
+				SetGlobalVar(4,bf_k);
+			}
+			If(bf_k==1 and bc_k==0 and  l[1]>x_g[1])
+			{
+				bf_k=0;
+				SetGlobalVar(4,bf_k);
+			}
+			If(sf_k!=1 and bc_k!=0 and h[1]<x_g[1])
+			{
+				sf_k=1;
+				SetGlobalVar(5,sf_k);
+			}
+			if(bc_k!=0 and cb_k==0)
+			{
+				SetGlobalVar(9,EntryPrice);
+			}
+			break;
+		}
+	}
+	if(GetGlobalVar(7)==0)
+	{
+		cb=GetGlobalVar(8);
+		if(cb!=0)
+		{
+			PlotNumeric("止盈",cb*(1+bfb_z_k*0.010));
+		}
+		if(cb!=0 and h>=cb*(1+bfb_z_d*0.01))
+		{
+		//Sell
+			bc=0;
+			SetGlobalVar(0,bc);
+			SetGlobalVar(7,5);
+			SetGlobalVar(8,0);
+			SetGlobalVar(10,0);
+			SetGlobalVar(11,cb*(1+bfb_z_d*0.01));
+			if(h>=s_g)
+			{
+				bf=1;
+				SetGlobalVar(1,bf);
+			}
+			else if(h>=s)
+			{
+				bf=0;
+				SetGlobalVar(1,bf);
+			}
+		}
+		//========
+		cb_k=GetGlobalVar(9);
+		if(cb_k!=0)
+		{
+			PlotNumeric("止盈",cb_k*(1-bfb_z_k*0.010));
+		}
+		if(cb_k!=0 and l<=cb_k*(1-bfb_z_k*0.010))
+		{
+		//BuyToCover
+			bc_k=0;
+			SetGlobalVar(3,bc_k);
+			SetGlobalVar(7,6);
+			SetGlobalVar(9,0);
+			SetGlobalVar(10,0);
+			SetGlobalVar(11,cb_k*(1-bfb_z_k*0.010));
+			if(l<=x_g)
+			{
+				bf_k=1;
+				SetGlobalVar(4,bf_k);
+			}
+			else if(l<=x)
+			{
+				bf_k=0;
+				SetGlobalVar(4,bf_k);
+			}
+		}
+	}
+	if(MarketPosition==0 and GetGlobalVar(7)==1)
+	{
+		buy(lot,o);
+	}
+	if(MarketPosition==1 and GetGlobalVar(7)==2)
+	{
+		sell(lot,o);
+	}
+	if(MarketPosition==0 and GetGlobalVar(7)==3)
+	{
+		SellShort(lot,o);
+	}
+	if(MarketPosition==-1 and GetGlobalVar(7)==4)
+	{
+		BuyToCover(lot,o);
+	}
+	if(MarketPosition==1 and GetGlobalVar(7)==5)
+	{
+		If(o<=GetGlobalVar(11))
+		{
+			sell(lot,GetGlobalVar(11));
+		}
+		Else
+		{
+			Sell(lot,o);
+		}
+	}
+	if(MarketPosition==-1 and GetGlobalVar(7)==6)
+	{
+		If(o>=GetGlobalVar(11))
+		{
+			BuyToCover(lot,GetGlobalVar(11));
+		}
+		Else
+		{
+			BuyToCover(lot,o);
+		}
+	}
+//	PlotString("c",Text(cb_k));
+
+
+End
+
+
+
+
+//------------------------------------------------------------------------
+// 编译版本:	2017/03/02 104942
+// 内核版本:	V2.3.2.10
+// 版权所有	wyk1234
+// 更改声明	TradeBlazer Software保留对TradeBlazer平台
+//			每一版本的TradeBlazer公式修改和重写的权利
+//------------------------------------------------------------------------
