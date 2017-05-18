@@ -1,0 +1,149 @@
+//------------------------------------------------------------------------
+// 简称: ZS_M_Y
+// 名称: 美豆压榨利润监控
+// 类别: 公式应用
+// 类型: 用户应用
+// 输出:
+//------------------------------------------------------------------------
+/*
+方案一：通过美豆期货保值，压榨后的油粕也通过美豆保值
+方案二：通过美豆保船期，通过大连油粕保销售期
+方案三：通过延迟一月结价，保护货值
+*/
+
+Params
+Numeric Exchange(6.2);
+Numeric Agio(214);
+Numeric	OilYield(0.18);
+Numeric	Yield(0.8);
+Numeric	Tax(0.1639);
+Numeric	Fee(280);
+Numeric ConversionCoefficient(0.367433);
+
+Numeric OilBasis(100);
+Numeric	SoybeanMealBasis(300);
+//0.367433 是美元 / 蒲式耳转变为元 / 吨的转换系数。
+Vars
+//Numeric	Exchange(6.2);//汇率
+Numeric	K1;
+Numeric	K2;
+Numeric YZ;
+Begin
+If (Data0.SymbolType <> "ZS" )
+{
+	Commentary("美豆合约错误,注意输入");
+	Return;
+}
+If (Data1.SymbolType <> "m" )
+{
+	Commentary("连粕合约错误,注意输入");
+	Return;
+}
+If (Data2.SymbolType <> "y" )
+{
+	Commentary("豆油合约错误,注意输入");
+	Return;
+}
+//数据有效
+
+//Commentary(text(data0.V));
+If (Data0.V == 0 )
+{
+	Commentary("美豆合约成交量为0,退出");
+	Return;
+}
+If (Data1.V == 0 )
+{
+	Commentary("连粕合约成交量为0,退出");
+	Return;
+}
+If (Data2.V == 0 )
+{
+	Commentary("豆油合约成交量为0,退出");
+	Return;
+}
+
+//比价
+//Commentary("人民币/蒲式耳="+text(Data0.C*Exchange));
+//Commentary("人民币/公斤="+text(Data0.C*Exchange*27.100/1000));
+
+//YZ=Data0.C*Exchange*(27.100/1000)*(1+0.1639);
+//PlotNumeric("yz",yz,0,Red);
+Commentary("↓↓↓计算过程如下↓↓↓");
+Commentary("Data1.C="+Text(Data1.C));
+Commentary("Yield="+Text(Yield));
+Commentary("Data1.C*Yield="+Text(Data1.C*Yield));
+Commentary("Data2.C="+Text(Data2.C));
+Commentary("OilYield="+Text(OilYield));
+Commentary("Data2.C*OilYield="+Text(Data2.C*OilYield));
+Commentary("Data1.C*Yield+Data2.C*OilYield="+Text(Data1.C*Yield+Data2.C*OilYield));
+Commentary("Data0.C="+Text(Data0.C));
+Commentary("Data0.C*100="+Text(Data0.C*100));
+Commentary("Agio="+Text(Agio));
+Commentary("Data0.C+Agio="+Text(Data0.C*100+Agio));
+Commentary("ConversionCoefficient*(1+Tax)*Exchange="+Text(ConversionCoefficient*(1+Tax)*Exchange));
+K1=(Data1.C*Yield+Data2.C*OilYield)-(Data0.C*100+Agio)*ConversionCoefficient*(1+Tax)*Exchange+FEE;
+PlotNumeric("K1",k1,0,red);
+
+K2=OilBasis*OilYield+SoybeanMealBasis*Yield;
+PlotNumeric("K2",k2,0,Green);
+
+PlotNumeric("K1+K2=",K1+K2,0,Yellow);
+
+End
+
+
+
+//其他资料：
+//1蒲式耳大豆＝60磅＝27.100公斤
+//大豆合约	SH SX
+//豆粕合约	SMH
+//豆油合约	BOH
+/*
+合约释疑
+http://futures.hexun.com/2012-07-27/144053243.html
+
+上市交易所
+芝加哥商业交易所（CME）-CBOT
+大连商品交易所
+交易品种和代码
+大豆（Globex电子盘代码：ZS；电子盘结算代码：S；场内交易代码：S）
+黄大豆1号（A）
+合约大小（手）
+5000蒲式耳（约136吨）
+10吨
+报价单位
+美分/蒲式耳
+元/吨
+最小变动价位
+0.25美分/蒲式耳=12.5美元/手
+1元/吨
+合约交割月份
+1(F)、3(H)、5(K)、7(N)、8(Q)、9(U)、11(X)z
+1、3、5、7、9、11月
+挂牌交易合约月份
+从最近的现货月起36个月内的合约
+从最近的现货月起18个月内的合约
+交割品等级
+2号黄大豆，1号黄大豆为合约价格升水6美分/蒲式耳，3号黄大豆为合约价格贴水6美分/蒲式耳
+大连商品交易所黄大豆1号价格品质标准（FA/DCE D001-2009)
+交割方式
+实物交割
+实物交割
+交易时间
+电子交易星期一--五: 06:00-03:00
+公开喊价星期二--五: 22:30-03:00
+周一-周五：
+9:00-11:30,
+13:30-15:00
+
+
+*/
+
+//------------------------------------------------------------------------
+// 编译版本	GS2015.12.25
+// 用户版本	2017/02/24 14:14:55
+// 版权所有	sqltxt
+// 更改声明	TradeBlazer Software保留对TradeBlazer平台
+//			每一版本的TradeBlazer公式修改和重写的权利
+//------------------------------------------------------------------------
