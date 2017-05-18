@@ -1,0 +1,38 @@
+//------------------------------------------------------------------------
+// 简称: m_zm
+// 名称: 豆粕内外盘
+// 类别: 公式应用
+// 类型: 用户应用
+// 输出:
+//------------------------------------------------------------------------
+
+Params
+Numeric HL(6.2);
+Vars
+NumericSeries JC(0);
+Begin
+ Commentary(Data0.SymbolType);
+ Commentary(Text(DATA0.C));
+ Commentary(TEXT(DATA1.C));
+ Commentary("ZM*HL="+TEXT(Data0.C*HL));
+ If (Data0.SymbolType == "ZM")
+	{
+		If (Data1.SymbolType == "m")
+		{
+			JC=Data1.C-Data0.C*HL;
+			Commentary("价差="+Text(JC));
+		}
+	}
+If (JC<>0)
+{
+	PlotNumeric("芝加哥连粕价差",JC,0,WHITE,0);
+}
+End
+
+//------------------------------------------------------------------------
+// 编译版本	GS2015.12.25
+// 用户版本	2017/02/20 17:16:58
+// 版权所有	sqltxt
+// 更改声明	TradeBlazer Software保留对TradeBlazer平台
+//			每一版本的TradeBlazer公式修改和重写的权利
+//------------------------------------------------------------------------
