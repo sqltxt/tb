@@ -543,6 +543,20 @@ Begin
 PlotString("7777",Text(getglobalvar(7)),0,white);
 //	PlotString("c",Text(cb_k));
 
+Commentary("0:"+text(getglobalvar(0))+"  ==  多单手数");
+Commentary("1:"+text(getglobalvar(1)));
+Commentary("2:"+text(getglobalvar(2)));
+Commentary("3:"+text(getglobalvar(3))+"  ==  空单手数");
+Commentary("4:"+text(getglobalvar(4)));
+Commentary("5:"+text(getglobalvar(5)));
+Commentary("6:"+text(getglobalvar(6))+"  ==  k线索引");
+Commentary("7:"+text(getglobalvar(7))+"  ==  情景");
+Commentary("8:"+text(getglobalvar(8)));
+Commentary("9:"+text(getglobalvar(9)));
+Commentary("10:"+text(getglobalvar(10)));
+Commentary("11:"+text(getglobalvar(11)));
+
+
 
 End
 
