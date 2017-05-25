@@ -8,12 +8,12 @@
 
 Params
 	//此处添加参数
-	Numeric length(120);
-	Numeric n(29);
+	Numeric length(165);
+	Numeric n(65);
 	Numeric lot(1);
-	Numeric b(2);
-	Numeric b_g(4.7);
-	Numeric bfb_z_d(1);
+	Numeric b(1);
+	Numeric b_g(7);
+	Numeric bfb_z_d(5);
 //	Numeric bfb_z_k(1);
 Vars
 	//此处添加变量
@@ -44,6 +44,8 @@ Vars
 	string filename;
 	Numeric val;
 	String hh;
+	
+	String tag;
 Begin
 	bfb_z_k=bfb_z_d;
 	//此处添加代码正文
@@ -93,7 +95,7 @@ Begin
 			bf=GetGlobalVar(1);
 			sf=GetGlobalVar(2);
 			cb=GetGlobalVar(8);
-			If(bc==0 and bf!=1 and l[1]>s_g[1] and o[1]<=c[1])
+			If(bc==0 and bf!=1 and l[1]>s_g[1] and o[1]<=c[1])//最低价>高阶上轨 并且 开盘价<收盘价
 			{
 				SetGlobalVar(7,1);
 //				Buy(lot,o);
@@ -536,6 +538,9 @@ Begin
 			BuyToCover(lot,o);
 		}
 	}
+	
+//tag= IIF(getglobalvar(7)==0,"",text(getglobalvar(7)));
+PlotString("7777",Text(getglobalvar(7)),0,white);
 //	PlotString("c",Text(cb_k));
 
 
