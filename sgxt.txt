@@ -22,21 +22,21 @@ Vars
 	Numeric i;
 	Numeric r;
 	Numeric hv;
-	Numeric bc;
-	Numeric bf;//内轨是否开仓
-	Numeric sf;//外轨是否平仓
+	Numeric bc;//多单手数			0
+	Numeric bf;//内轨是否开仓		1
+	Numeric sf;//外轨是否平仓		2
 	NumericSeries s;
 	NumericSeries s_g;
 	
-	Numeric bc_k;
-	Numeric bf_k;
-	Numeric sf_k;
+	Numeric bc_k;//空单手数？		3
+	Numeric bf_k;//空单内轨是否开仓	4
+	Numeric sf_k;//空单外轨是否平仓	5
 	NumericSeries x;
 	NumericSeries x_g;
 	
 	Numeric p;
-	Numeric cb;
-	Numeric cb_k;
+	Numeric cb;	//					8
+	Numeric cb_k;//					9
 	Numeric bfb_z_k;
 	
 	
@@ -55,7 +55,11 @@ Begin
     et=20171230;
 /* if (GetUserID!="wkjy81000777" Or CurrentDate>=et Or 10000*Year+100*Month+Day>=et Or CurrentDate<=st Or 10000*Year+100*Month+Day<=st )
 {Return;}*/
-
+if (GetGlobalVar(10) <> 0)
+{
+	Return;
+	//PlotString("100",Text(GetGlobalVar(10)),0,Red);
+}
 	If(CurrentBar==0)
 	{
 		SetGlobalVar(0,0);
@@ -540,22 +544,30 @@ Begin
 	}
 	
 //tag= IIF(getglobalvar(7)==0,"",text(getglobalvar(7)));
-PlotString("7777",Text(getglobalvar(7)),0,white);
+//PlotString("7777",Text(getglobalvar(7)),0,white);
 //	PlotString("c",Text(cb_k));
 
-Commentary("0:"+text(getglobalvar(0))+"  ==  多单手数");
-Commentary("1:"+text(getglobalvar(1)));
-Commentary("2:"+text(getglobalvar(2)));
-Commentary("3:"+text(getglobalvar(3))+"  ==  空单手数");
-Commentary("4:"+text(getglobalvar(4)));
-Commentary("5:"+text(getglobalvar(5)));
+Commentary("0:"+text(getglobalvar(0))+"  ==  多单手数 == bc");
+Commentary("1:"+text(getglobalvar(1))+"  ==  内轨是否开仓  == bf");
+Commentary("2:"+text(getglobalvar(2))+"  ==  外轨是否平仓  == sf");
+Commentary("3:"+text(getglobalvar(3))+"  ==  空单手数 == bc_k");
+Commentary("4:"+text(getglobalvar(4))+"  ==  内轨是否开仓空单 == bf_k");
+Commentary("5:"+text(getglobalvar(5))+"  ==  外轨是否平仓空单  == sf_k");
 Commentary("6:"+text(getglobalvar(6))+"  ==  k线索引");
 Commentary("7:"+text(getglobalvar(7))+"  ==  情景");
-Commentary("8:"+text(getglobalvar(8)));
-Commentary("9:"+text(getglobalvar(9)));
-Commentary("10:"+text(getglobalvar(10)));
-Commentary("11:"+text(getglobalvar(11)));
+Commentary("8:"+text(getglobalvar(8))+"  ==  开仓价  ==  cb");
+Commentary("9:"+text(getglobalvar(9))+"  ==  开仓价空单  ==  cb_k");
+Commentary("10:"+text(getglobalvar(10))+"  == 梁山军师 恒等于0");
+Commentary("11:"+text(getglobalvar(11))+"  == 止盈价");
 
+if (GetGlobalVar(8)<>0)
+{
+	//PlotString("888",Text(GetGlobalVar(8)),0,Red);
+}
+if (GetGlobalVar(9)<>0)
+{
+	//PlotString("999",Text(GetGlobalVar(9)),0,Blue);
+}
 
 
 End
