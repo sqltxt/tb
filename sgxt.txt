@@ -101,152 +101,152 @@ if (GetGlobalVar(10) <> 0)
 			cb=GetGlobalVar(8);
 			If(bc==0 and bf!=1 and l[1]>s_g[1] and o[1]<=c[1])//最低价>高阶上轨 并且 开盘价<收盘价
 			{
-				SetGlobalVar(7,1);
+				SetGlobalVar(7,1);							//情景1
 //				Buy(lot,o);
 				bc=lot;
-				SetGlobalVar(0,bc);
+				SetGlobalVar(0,bc);							//手数lot
 				sf=1;
-				SetGlobalVar(2,sf);
+				SetGlobalVar(2,sf);							//外轨平仓 置 1
 				bf=1;
-				SetGlobalVar(1,bf);
-				SetGlobalVar(10,0);
+				SetGlobalVar(1,bf);							//内轨开仓 置 1
+				SetGlobalVar(10,0);							// 吴用	   置 1
 //				Return;
 				break;
 			}
 			If(bc==0 and bf!=1 and l[2]>s_g[2] and o[2]>c[2] and h[1]>=s_g[1] and c[1]>x[1])
 			{
-				SetGlobalVar(7,1);
+				SetGlobalVar(7,1);							//情景	1
 //				Buy(lot,o);
 				bc=lot;
-				SetGlobalVar(0,bc);
+				SetGlobalVar(0,bc);							//手数		lot
 				sf=1;
-				SetGlobalVar(2,sf);
+				SetGlobalVar(2,sf);							//外轨平仓 	置1
 				bf=1;
-				SetGlobalVar(1,bf);
-				SetGlobalVar(10,0);
+				SetGlobalVar(1,bf);							//内轨开仓 	置 1
+				SetGlobalVar(10,0);							// 吴用	   	置 1
 //				Return;
 				break;
 			}
 			If(bc==0 and bf==-1 and l[1]>s[1] and o[1]<=c[1])
 			{
-				SetGlobalVar(7,1);
+				SetGlobalVar(7,1);							//情景	1
 //				Buy(lot,o);
 				bc=lot;
-				SetGlobalVar(0,bc);
+				SetGlobalVar(0,bc);							//手数	lot
 				bf=0;
-				SetGlobalVar(1,bf);
+				SetGlobalVar(1,bf);							//内轨开仓 	置0
 				SetGlobalVar(10,0);
 				If(l[1]<=s_g[1])
 				{
 					sf=0;
-					SetGlobalVar(2,sf);
+					SetGlobalVar(2,sf);						//外轨平仓 	置0
 				}
 				else
 				{
 					sf=1;
-					SetGlobalVar(2,sf);
+					SetGlobalVar(2,sf);						//外轨平仓 	置1
 				}
 //				Return;
 				break;
 			}
 			If(bc==0 and bf==-1 and l[2]>s[2] and o[2]>c[2] and h[1]>s[1] and c[1]>x[1])
 			{
-				SetGlobalVar(7,1);
+				SetGlobalVar(7,1);							//情景	1
 //				Buy(lot,o);
 				bc=lot;
-				SetGlobalVar(0,bc);
+				SetGlobalVar(0,bc);							//手数	lot
 				bf=0;
-				SetGlobalVar(1,bf);
+				SetGlobalVar(1,bf);							//内轨开仓 	置0
 				SetGlobalVar(10,0);
 				If(l[1]<=s_g[1])
 				{
 					sf=0;
-					SetGlobalVar(2,sf);
+					SetGlobalVar(2,sf);						//外轨平仓 	置0
 				}
 				else
 				{
 					sf=1;
-					SetGlobalVar(2,sf);
+					SetGlobalVar(2,sf);						//外轨平仓 	置1
 				}
 //				Return;
 				break;
 			}
 			If(bc!=0 and sf==1 and h[1]<s_g[1] and c[1]<=o[1])
 			{
-				SetGlobalVar(7,2);
+				SetGlobalVar(7,2);							//情景	2
 //				Sell(bc,o);
-				bc=0;
-				SetGlobalVar(0,bc);
+				bc=0;										//手数	lot
+				SetGlobalVar(0,bc);							
 				sf=0;
-				SetGlobalVar(2,sf);
+				SetGlobalVar(2,sf);							//外轨平仓 	置0
 				cb=0;
-				SetGlobalVar(8,cb);
+				SetGlobalVar(8,cb);							//开仓价		置0
 				SetGlobalVar(10,0);
 				If(h[1]>=s[1])
 				{
 					bf=0;
-					SetGlobalVar(1,bf);
+					SetGlobalVar(1,bf);						//内轨开仓 	置0
 				}
 				else
 				{
 					bf=-1;
-					SetGlobalVar(1,bf);
+					SetGlobalVar(1,bf);						//内轨开仓 	置1
 				}
 //				Return;
 				break;
 			}
 			If(bc!=0 and sf==1 and h[2]<s_g[2] and c[2]>o[2] and l[1]<=s_g[1])
 			{
-				SetGlobalVar(7,2);
+				SetGlobalVar(7,2);							//情景	2
 //				Sell(bc,o);
 				bc=0;
-				SetGlobalVar(0,bc);
+				SetGlobalVar(0,bc);							//手数	lot
 				sf=0;
-				SetGlobalVar(2,sf);
+				SetGlobalVar(2,sf);							//外轨平仓 	置0
 				cb=0;
-				SetGlobalVar(8,cb);
+				SetGlobalVar(8,cb);							//开仓价		置0
 				SetGlobalVar(10,0);
 				If(h[1]>=s[1])
 				{
 					bf=0;
-					SetGlobalVar(1,bf);
+					SetGlobalVar(1,bf);						//内轨开仓 	置0
 				}
 				else
 				{
 					bf=-1;
-					SetGlobalVar(1,bf);
+					SetGlobalVar(1,bf);						//内轨开仓 	置-1
 				}
 //				Return;
 				break;
 			}
 			If(bc!=0 and h[1]<s[1] and o[1]>=c[1])
 			{
-				SetGlobalVar(7,2);
+				SetGlobalVar(7,2);							//情景	2					
 //				Sell(bc,o);
 				bc=0;
-				SetGlobalVar(0,bc);
+				SetGlobalVar(0,bc);							//手数	lot
 				bf=-1;
-				SetGlobalVar(1,bf);
+				SetGlobalVar(1,bf);							//内轨开仓 	置-1
 				sf=-1;
-				SetGlobalVar(2,sf);
+				SetGlobalVar(2,sf);							//外轨平仓 	置-1
 				cb=0;
-				SetGlobalVar(8,cb);
+				SetGlobalVar(8,cb);							//开仓价		置0
 				SetGlobalVar(10,0);
 //				Return;
 				break;
 			}
 			If(bc!=0 and h[2]<s[2] and o[2]<c[2] and l[1]<=s[1])
 			{
-				SetGlobalVar(7,2);
+				SetGlobalVar(7,2);							//情景	2
 //				Sell(bc,o);
 				bc=0;
-				SetGlobalVar(0,bc);
+				SetGlobalVar(0,bc);							//手数	lot				
 				bf=-1;
-				SetGlobalVar(1,bf);
+				SetGlobalVar(1,bf);							//内轨开仓 	置-1
 				sf=-1;
-				SetGlobalVar(2,sf);
+				SetGlobalVar(2,sf);							//外轨平仓 	置-1
 				cb=0;
-				SetGlobalVar(8,cb);
+				SetGlobalVar(8,cb);							//开仓价 	置0
 				SetGlobalVar(10,0);
 //				Return;
 				break;
@@ -254,21 +254,21 @@ if (GetGlobalVar(10) <> 0)
 			If(bf!=-1 and bc==0 and  h[1]<s[1])
 			{
 				bf=-1;
-				SetGlobalVar(1,bf);
+				SetGlobalVar(1,bf);							//内轨开仓 	置-1
 			}
 			If(bf==1 and bc==0 and  h[1]<s_g[1])
 			{
 				bf=0;
-				SetGlobalVar(1,bf);
+				SetGlobalVar(1,bf);							//内轨开仓 	置0
 			}
-			If(sf!=1 and bc!=0 and l[1]>s_g[1])
+			If(sf!=1 and bc!=0 and l[1]>s_g[1])				
 			{
 				sf=1;
-				SetGlobalVar(2,sf);
+				SetGlobalVar(2,sf);							//外轨平仓 	置1							
 			}
 			if(bc!=0 and cb==0)
 			{
-				SetGlobalVar(8,EntryPrice);
+				SetGlobalVar(8,EntryPrice);					//开仓价为建仓价
 			}
 //-----------------------------------------------
 //+++++++++++++++++++++++++++++++++++++++++++++++
@@ -278,152 +278,152 @@ if (GetGlobalVar(10) <> 0)
 			cb_k=GetGlobalVar(9);
 			If(bc_k==0 and bf_k!=1 and h[1]<x_g[1] and o[1]>=c[1])
 			{
-				SetGlobalVar(7,3);
+				SetGlobalVar(7,3);							//情景3
 //				SellShort(lot,o);
 				bc_k=lot;
-				SetGlobalVar(3,bc_k);
+				SetGlobalVar(3,bc_k);						//手数	lot
 				sf_k=1;
-				SetGlobalVar(5,sf_k);
+				SetGlobalVar(5,sf_k);						//外轨平仓 	置1	
 				bf_k=1;
-				SetGlobalVar(4,bf_k);
+				SetGlobalVar(4,bf_k);						//内轨开仓	置1
 				SetGlobalVar(10,0);
 //				Return;	
 				break;	
 			}
 			If(bc_k==0 and bf_k!=1 and h[2]<x_g[2] and o[2]<c[2] and l[1]<=s_g[1] and c[1]<s[1])
 			{
-				SetGlobalVar(7,3);
+				SetGlobalVar(7,3);							//情景3
 //				SellShort(lot,o);
 				bc_k=lot;
-				SetGlobalVar(3,bc_k);
+				SetGlobalVar(3,bc_k);						//手数 lot
 				sf_k=1;
-				SetGlobalVar(5,sf_k);
+				SetGlobalVar(5,sf_k);						//外轨平仓 	置1	
 				bf_k=1;
-				SetGlobalVar(4,bf_k);
+				SetGlobalVar(4,bf_k);						//内轨开仓	置1
 				SetGlobalVar(10,0);
 //				Return;	
 				break;	
 			}
 			If(bc_k==0 and bf_k==-1 and h[1]<x[1] and o[1]>=c[1])
 			{
-				SetGlobalVar(7,3);
+				SetGlobalVar(7,3);							//情景3
 //				SellShort(lot,o);
 				bc_k=lot;
-				SetGlobalVar(3,bc_k);
+				SetGlobalVar(3,bc_k);						//手数 lot
 				bf_k=0;
-				SetGlobalVar(4,bf_k);
+				SetGlobalVar(4,bf_k);						//内轨开仓	置1
 				SetGlobalVar(10,0);
 				If(h[1]>=x_g[1])
 				{
 					sf_k=0;
-					SetGlobalVar(5,sf_k);
+					SetGlobalVar(5,sf_k);					//外轨平仓 	置0
 				}
 				else
 				{
 					sf_k=1;
-					SetGlobalVar(5,sf_k);
+					SetGlobalVar(5,sf_k);					//外轨平仓 	置1
 				}
 //				Return;
 				break;
 			}
 			If(bc_k==0 and bf_k==-1 and h[2]<x[2] and o[2]<c[2] and l[1]<=x[1] and c[1]<s[1])
 			{
-				SetGlobalVar(7,3);
+				SetGlobalVar(7,3);							//情景3
 //				SellShort(lot,o);
 				bc_k=lot;
-				SetGlobalVar(3,bc_k);
+				SetGlobalVar(3,bc_k);						//手数 lot
 				bf_k=0;
-				SetGlobalVar(4,bf_k);
+				SetGlobalVar(4,bf_k);						//内轨开仓	置0
 				SetGlobalVar(10,0);
 				If(h[1]>=x_g[1])
 				{
 					sf_k=0;
-					SetGlobalVar(5,sf_k);
+					SetGlobalVar(5,sf_k);					//外轨平仓 	置0
 				}
 				else
 				{
 					sf_k=1;
-					SetGlobalVar(5,sf_k);
+					SetGlobalVar(5,sf_k);					//外轨平仓 	置1
 				}
 //				Return;
 				break;
 			}
 			If(bc_k!=0 and sf_k==1 and l[1]>x_g[1] and c[1]>=o[1])
 			{
-				SetGlobalVar(7,4);
+				SetGlobalVar(7,4);							//情景4
 //				BuyToCover(bc_k,o);
 				bc_k=0;
-				SetGlobalVar(3,bc_k);
+				SetGlobalVar(3,bc_k);						//手数 lot
 				sf_k=0;
-				SetGlobalVar(5,sf_k);
+				SetGlobalVar(5,sf_k);						//外轨平仓 	置0
 				cb_k=0;
-				SetGlobalVar(9,cb_k);
+				SetGlobalVar(9,cb_k);						//开仓价		置0
 				SetGlobalVar(10,0);
 				If(l[1]<=x[1])
 				{
 					bf_k=0;
-					SetGlobalVar(4,bf_k);
+					SetGlobalVar(4,bf_k);					//内轨开仓	置0
 				}
 				else
 				{
 					bf_k=-1;
-					SetGlobalVar(4,bf_k);
+					SetGlobalVar(4,bf_k);					//内轨开仓	置-1
 				}
 //				Return;
 				break;
 			}
 			If(bc_k!=0 and sf_k==1 and l[2]>x_g[2] and c[2]<o[2] and h[1]>=x_g[1])
 			{
-				SetGlobalVar(7,4);
+				SetGlobalVar(7,4);							//情景4
 //				BuyToCover(bc_k,o);
 				bc_k=0;
-				SetGlobalVar(3,bc_k);
+				SetGlobalVar(3,bc_k);						//手数 lot
 				sf_k=0;
-				SetGlobalVar(5,sf_k);
+				SetGlobalVar(5,sf_k);						//外轨平仓 	置0
 				cb_k=0;
-				SetGlobalVar(9,cb_k);
+				SetGlobalVar(9,cb_k);						//开仓价		置0
 				SetGlobalVar(10,0);
 				If(l[1]<=x[1])
 				{
 					bf_k=0;
-					SetGlobalVar(4,bf_k);
+					SetGlobalVar(4,bf_k);					//内轨开仓	置0
 				}
 				else
 				{
 					bf_k=-1;
-					SetGlobalVar(4,bf_k);
+					SetGlobalVar(4,bf_k);					//内轨开仓	置-1
 				}
 //				Return;
 				break;
 			}
 			If(bc_k!=0 and l[1]>x[1] and c[1]>=o[1])
 			{
-				SetGlobalVar(7,4);
+				SetGlobalVar(7,4);							//情景4
 //				BuyToCover(bc_k,o);
 				bc_k=0;
-				SetGlobalVar(3,bc_k);
+				SetGlobalVar(3,bc_k);						//手数 lot
 				bf_k=-1;
-				SetGlobalVar(4,bf_k);
+				SetGlobalVar(4,bf_k);						//内轨开仓	置-1
 				sf_k=-1;
-				SetGlobalVar(5,sf_k);
+				SetGlobalVar(5,sf_k);						//外轨平仓 	置-1
 				cb_k=0;
-				SetGlobalVar(9,cb_k);
+				SetGlobalVar(9,cb_k);						//开仓价		置0
 				SetGlobalVar(10,0);
 //				Return;
 				break;
 			}
 			If(bc_k!=0 and l[2]>x[2] and c[2]<o[2] and h[1]>=x[1])
 			{
-				SetGlobalVar(7,4);
+				SetGlobalVar(7,4);							//情景4
 //				BuyToCover(bc_k,o);
 				bc_k=0;
-				SetGlobalVar(3,bc_k);
+				SetGlobalVar(3,bc_k);						//手数 lot
 				bf_k=-1;
-				SetGlobalVar(4,bf_k);
+				SetGlobalVar(4,bf_k);						//内轨开仓	置-1
 				sf_k=-1;
-				SetGlobalVar(5,sf_k);
+				SetGlobalVar(5,sf_k);						//外轨平仓 	置-1
 				cb_k=0;
-				SetGlobalVar(9,cb_k);
+				SetGlobalVar(9,cb_k);						//开仓价		置0
 				SetGlobalVar(10,0);
 //				Return;
 				break;
@@ -431,21 +431,21 @@ if (GetGlobalVar(10) <> 0)
 			If(bf_k!=-1 and bc_k==0 and  l[1]>x[1])
 			{
 				bf_k=-1;
-				SetGlobalVar(4,bf_k);
+				SetGlobalVar(4,bf_k);						//内轨开仓	置-1		
 			}
 			If(bf_k==1 and bc_k==0 and  l[1]>x_g[1])
 			{
 				bf_k=0;
-				SetGlobalVar(4,bf_k);
+				SetGlobalVar(4,bf_k);						//内轨开仓	置0
 			}
 			If(sf_k!=1 and bc_k!=0 and h[1]<x_g[1])
 			{
 				sf_k=1;
-				SetGlobalVar(5,sf_k);
+				SetGlobalVar(5,sf_k);						//外轨平仓 	置1		
 			}
 			if(bc_k!=0 and cb_k==0)
 			{
-				SetGlobalVar(9,EntryPrice);
+				SetGlobalVar(9,EntryPrice);					//开仓价为建仓价
 			}
 			break;
 		}
@@ -462,10 +462,10 @@ if (GetGlobalVar(10) <> 0)
 		//Sell
 			bc=0;
 			SetGlobalVar(0,bc);
-			SetGlobalVar(7,5);
-			SetGlobalVar(8,0);
+			SetGlobalVar(7,5);								//情景5
+			SetGlobalVar(8,0);								//多单开仓价
 			SetGlobalVar(10,0);
-			SetGlobalVar(11,cb*(1+bfb_z_d*0.01));
+			SetGlobalVar(11,cb*(1+bfb_z_d*0.01));			//止盈价		cb*(1+bfb_z_d*0.01)
 			if(h>=s_g)
 			{
 				bf=1;
@@ -488,10 +488,10 @@ if (GetGlobalVar(10) <> 0)
 		//BuyToCover
 			bc_k=0;
 			SetGlobalVar(3,bc_k);
-			SetGlobalVar(7,6);
-			SetGlobalVar(9,0);
+			SetGlobalVar(7,6);								//情景6
+			SetGlobalVar(9,0);								//空单开仓价
 			SetGlobalVar(10,0);
-			SetGlobalVar(11,cb_k*(1-bfb_z_k*0.010));
+			SetGlobalVar(11,cb_k*(1-bfb_z_k*0.010));		//止盈价		cb_k*(1-bfb_z_k*0.010)
 			if(l<=x_g)
 			{
 				bf_k=1;
@@ -569,7 +569,7 @@ if (GetGlobalVar(9)<>0)
 	//PlotString("999",Text(GetGlobalVar(9)),0,Blue);
 }
 
-
+PlotString("111",text(getglobalvar(1)),0,red);
 End
 
 
