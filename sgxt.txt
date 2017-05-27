@@ -59,7 +59,7 @@ Begin
 SetGlobalVar(112,GetGlobalVar(111));
 if (GetGlobalVar(10) <> 0)
 {
-	Return;
+	//Return;
 	//PlotString("100",Text(GetGlobalVar(10)),0,Red);
 }
 	If(CurrentBar==0)
@@ -305,20 +305,24 @@ if (GetGlobalVar(10) <> 0)
 			{
 				bf=-1;
 				SetGlobalVar(1,bf);							//内轨开仓 	置-1
+				PlotString("bf","bf=-1",0,yellow);
 			}
 			If(bf==1 and bc==0 and  h[1]<s_g[1])
 			{
 				bf=0;
 				SetGlobalVar(1,bf);							//内轨开仓 	置0
+				PlotString("bf","bf=0",0,yellow);
 			}
 			If(sf!=1 and bc!=0 and l[1]>s_g[1])				
 			{
 				sf=1;
-				SetGlobalVar(2,sf);							//外轨平仓 	置1							
+				SetGlobalVar(2,sf);							//外轨平仓 	置1	
+				PlotString("sf","sf=1",0,yellow);
 			}
 			if(bc!=0 and cb==0)
 			{
 				SetGlobalVar(8,EntryPrice);					//开仓价为建仓价
+				//PlotString("cb","cb",0,yellow);
 			}
 //-----------------------------------------------
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++做空 情景3 、 4
@@ -408,7 +412,7 @@ if (GetGlobalVar(10) <> 0)
 				SetGlobalVar(4,bf_k);						//内轨开仓	置0
 				SetGlobalVar(10,0);
 				SetGlobalVar(111,12);
-				If(h[1]>=x_g[1])
+				If(h[1]>=x_g[1])							//判断与高阶的关系
 				{
 					sf_k=0;
 					SetGlobalVar(5,sf_k);					//外轨平仓 	置0
@@ -525,20 +529,24 @@ if (GetGlobalVar(10) <> 0)
 			{
 				bf_k=-1;
 				SetGlobalVar(4,bf_k);						//内轨开仓	置-1		
+				PlotString("bfk","bf_k=-1",0,yellow);
 			}
 			If(bf_k==1 and bc_k==0 and  l[1]>x_g[1])
 			{
 				bf_k=0;
 				SetGlobalVar(4,bf_k);						//内轨开仓	置0
+				PlotString("bfk","bf_k=0",0,yellow);
 			}
 			If(sf_k!=1 and bc_k!=0 and h[1]<x_g[1])
 			{
 				sf_k=1;
-				SetGlobalVar(5,sf_k);						//外轨平仓 	置1		
+				SetGlobalVar(5,sf_k);						//外轨平仓 	置1
+				PlotString("sfk","sf_k=1",0,yellow);
 			}
 			if(bc_k!=0 and cb_k==0)
 			{
 				SetGlobalVar(9,EntryPrice);					//开仓价为建仓价
+				//PlotString("cbk","cb_k",0,yellow);
 			}
 			break;
 		}
@@ -659,18 +667,18 @@ if (GetGlobalVar(10) <> 0)
 //PlotString("7777",Text(getglobalvar(7)),0,white);
 //	PlotString("c",Text(cb_k));
 
-Commentary("0:"+text(getglobalvar(0))+"  ==  多单手数 == bc");
-Commentary("1:"+text(getglobalvar(1))+"  ==  内轨是否开仓  == bf");
-Commentary("2:"+text(getglobalvar(2))+"  ==  外轨是否平仓  == sf");
-Commentary("3:"+text(getglobalvar(3))+"  ==  空单手数 == bc_k");
-Commentary("4:"+text(getglobalvar(4))+"  ==  内轨是否开仓空单 == bf_k");
-Commentary("5:"+text(getglobalvar(5))+"  ==  外轨是否平仓空单  == sf_k");
-Commentary("6:"+text(getglobalvar(6))+"  ==  k线索引");
-Commentary("7:"+text(getglobalvar(7))+"  ==  情景");
-Commentary("8:"+text(getglobalvar(8))+"  ==  开仓价  ==  cb");
-Commentary("9:"+text(getglobalvar(9))+"  ==  开仓价空单  ==  cb_k");
-Commentary("10:"+text(getglobalvar(10))+"  == 梁山军师 恒等于0");
-Commentary("11:"+text(getglobalvar(11))+"  == 止盈价");
+//Commentary("0:"+text(getglobalvar(0))+"  ==  多单手数 == bc");
+Commentary("1:--- bf="+text(getglobalvar(1))+"  ==  内轨是否开仓  ");
+Commentary("2:--- sf="+text(getglobalvar(2))+"  ==  外轨是否平仓 ");
+//Commentary("3:"+text(getglobalvar(3))+"  ==  空单手数 == bc_k");
+Commentary("4:--- bf_k="+text(getglobalvar(4))+"==  内轨是否开仓空单");
+Commentary("5:--- sf_k="+text(getglobalvar(5))+"==  外轨是否平仓空单  ");
+//Commentary("6:"+text(getglobalvar(6))+"  ==  k线索引");
+//Commentary("7:"+text(getglobalvar(7))+"  ==  情景");
+//Commentary("8:"+text(getglobalvar(8))+"  ==  开仓价  ==  cb");
+//Commentary("9:"+text(getglobalvar(9))+"  ==  开仓价空单  ==  cb_k");
+//Commentary("10:"+text(getglobalvar(10))+"  == 梁山军师 恒等于0");
+//Commentary("11:"+text(getglobalvar(11))+"  == 止盈价");
 
 if (GetGlobalVar(8)<>0)
 {
@@ -689,15 +697,18 @@ PlotString("111",text(getglobalvar(111)),0,red);
 
 
 
-Commentary("1---高阶上轨---轨外阳线------------开多--------------9反之");
-Commentary("2---高阶上轨---l[2]>s_g[2] and o[2]>c[2] and h[1]>=s_g[1] and c[1]>x[1])------------开多--------------10反之");
-Commentary("5---高阶上轨---轨内阴线------------止损--------------13反之");
-Commentary("6---高阶上轨---轨内阳线未能返轨外---止损--------------14反之");
+Commentary("1---开多---阳线---高阶上轨---轨外--------------9反之");
+Commentary("2---开多---阴线---高阶上轨---轨外-------------10反之");//l[2]>s_g[2] and o[2]>c[2] and h[1]>=s_g[1] and c[1]>x[1])
+Commentary("5---止多---阴线---高阶上轨---轨内-------------13反之");
+Commentary("6---止多---阳线---高阶上轨---轨内-------------14反之");
 
-Commentary("3---上轨-------轨外阳线---开多-----------------------11反之");
-Commentary("4---上轨-------bc==0 and bf==-1 and l[2]>s[2] and o[2]>c[2] and h[1]>s[1] and c[1]>x[1]---开多-----------------------12反之");
-Commentary("7---上轨-------轨内阴线---止损-----------------------15反之");
-Commentary("8---上轨-------轨内阳线未能返轨外---止损--------------16反之");
+Commentary("3---开多---阳线---------上轨---轨外-------------11反之");
+Commentary("4---开多---阴线---------上轨---轨外-------------12反之");//-bc==0 and bf==-1 and l[2]>s[2] and o[2]>c[2] and h[1]>s[1] and c[1]>x[1]-
+Commentary("7---止多---阴线---------上轨---轨内-------------15反之");
+Commentary("8---止多---阳线---------上轨---轨内-------------16反之");
+
+
+
 
 End
 
