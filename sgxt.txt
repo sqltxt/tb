@@ -55,6 +55,8 @@ Begin
     et=20171230;
 /* if (GetUserID!="wkjy81000777" Or CurrentDate>=et Or 10000*Year+100*Month+Day>=et Or CurrentDate<=st Or 10000*Year+100*Month+Day<=st )
 {Return;}*/
+
+SetGlobalVar(112,GetGlobalVar(111));
 if (GetGlobalVar(10) <> 0)
 {
 	Return;
@@ -73,6 +75,7 @@ if (GetGlobalVar(10) <> 0)
 		SetGlobalVar(8,0);
 		SetGlobalVar(9,0);
 		SetGlobalVar(10,0);
+		SetGlobalVar(111,0);
 	}
 	r=0;
 	For i = 1 to n
@@ -95,11 +98,15 @@ if (GetGlobalVar(10) <> 0)
 		SetGlobalVar(7,0);
 		While(1==1)
 		{
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++做多情景1（3种情况） 、 2（4种情况）
 			bc=GetGlobalVar(0);
 			bf=GetGlobalVar(1);
 			sf=GetGlobalVar(2);
 			cb=GetGlobalVar(8);
-			If(bc==0 and bf!=1 and l[1]>s_g[1] and o[1]<=c[1])//最低价>高阶上轨 并且 开盘价<收盘价
+
+//---------1
+			
+			If(bc==0 and bf!=1 and l[1]>s_g[1] and o[1]<=c[1])//最低价>高阶上轨 并且 开盘价<收盘价------------------------站上上轨（高阶）且收阳线
 			{
 				SetGlobalVar(7,1);							//情景1
 //				Buy(lot,o);
@@ -110,10 +117,14 @@ if (GetGlobalVar(10) <> 0)
 				bf=1;
 				SetGlobalVar(1,bf);							//内轨开仓 置 1
 				SetGlobalVar(10,0);							// 吴用	   置 1
+				SetGlobalVar(111,1);
 //				Return;
 				break;
 			}
-			If(bc==0 and bf!=1 and l[2]>s_g[2] and o[2]>c[2] and h[1]>=s_g[1] and c[1]>x[1])
+			
+//---------2
+
+			If(bc==0 and bf!=1 and l[2]>s_g[2] and o[2]>c[2] and h[1]>=s_g[1] and c[1]>x[1])//--------------------------站上上轨（高阶）后收阴，且二次上穿上轨（高阶）收盘价在下轨之上
 			{
 				SetGlobalVar(7,1);							//情景	1
 //				Buy(lot,o);
@@ -124,10 +135,16 @@ if (GetGlobalVar(10) <> 0)
 				bf=1;
 				SetGlobalVar(1,bf);							//内轨开仓 	置 1
 				SetGlobalVar(10,0);							// 吴用	   	置 1
+				SetGlobalVar(111,2);
 //				Return;
 				break;
 			}
-			If(bc==0 and bf==-1 and l[1]>s[1] and o[1]<=c[1])
+			
+			
+//---------3
+
+
+			If(bc==0 and bf==-1 and l[1]>s[1] and o[1]<=c[1])//-----------------------------------------------------------站上上轨且收阳
 			{
 				SetGlobalVar(7,1);							//情景	1
 //				Buy(lot,o);
@@ -136,6 +153,7 @@ if (GetGlobalVar(10) <> 0)
 				bf=0;
 				SetGlobalVar(1,bf);							//内轨开仓 	置0
 				SetGlobalVar(10,0);
+				SetGlobalVar(111,3);
 				If(l[1]<=s_g[1])
 				{
 					sf=0;
@@ -149,7 +167,11 @@ if (GetGlobalVar(10) <> 0)
 //				Return;
 				break;
 			}
-			If(bc==0 and bf==-1 and l[2]>s[2] and o[2]>c[2] and h[1]>s[1] and c[1]>x[1])
+			
+			
+//---------4
+			
+			If(bc==0 and bf==-1 and l[2]>s[2] and o[2]>c[2] and h[1]>s[1] and c[1]>x[1])//---------------------------------站上上轨后收阴，且二次上穿上轨收盘价在下轨之上
 			{
 				SetGlobalVar(7,1);							//情景	1
 //				Buy(lot,o);
@@ -158,6 +180,7 @@ if (GetGlobalVar(10) <> 0)
 				bf=0;
 				SetGlobalVar(1,bf);							//内轨开仓 	置0
 				SetGlobalVar(10,0);
+				SetGlobalVar(111,4);
 				If(l[1]<=s_g[1])
 				{
 					sf=0;
@@ -171,7 +194,13 @@ if (GetGlobalVar(10) <> 0)
 //				Return;
 				break;
 			}
-			If(bc!=0 and sf==1 and h[1]<s_g[1] and c[1]<=o[1])
+			
+			
+//---------5
+
+			
+			
+			If(bc!=0 and sf==1 and h[1]<s_g[1] and c[1]<=o[1])//-----------------------------------------------------------最高价小于上轨（高阶）收阴线-----高阶止损
 			{
 				SetGlobalVar(7,2);							//情景	2
 //				Sell(bc,o);
@@ -182,6 +211,7 @@ if (GetGlobalVar(10) <> 0)
 				cb=0;
 				SetGlobalVar(8,cb);							//开仓价		置0
 				SetGlobalVar(10,0);
+				SetGlobalVar(111,5);
 				If(h[1]>=s[1])
 				{
 					bf=0;
@@ -195,7 +225,13 @@ if (GetGlobalVar(10) <> 0)
 //				Return;
 				break;
 			}
-			If(bc!=0 and sf==1 and h[2]<s_g[2] and c[2]>o[2] and l[1]<=s_g[1])
+			
+			
+//---------6
+
+			
+			
+			If(bc!=0 and sf==1 and h[2]<s_g[2] and c[2]>o[2] and l[1]<=s_g[1])//-------------------------------------------未超过高阶上轨收阳线，且下穿高阶上轨----止损
 			{
 				SetGlobalVar(7,2);							//情景	2
 //				Sell(bc,o);
@@ -206,6 +242,7 @@ if (GetGlobalVar(10) <> 0)
 				cb=0;
 				SetGlobalVar(8,cb);							//开仓价		置0
 				SetGlobalVar(10,0);
+				SetGlobalVar(111,6);
 				If(h[1]>=s[1])
 				{
 					bf=0;
@@ -219,7 +256,12 @@ if (GetGlobalVar(10) <> 0)
 //				Return;
 				break;
 			}
-			If(bc!=0 and h[1]<s[1] and o[1]>=c[1])
+			
+			
+//---------7
+
+
+			If(bc!=0 and h[1]<s[1] and o[1]>=c[1])			//----------------------------------------------轨下阴线
 			{
 				SetGlobalVar(7,2);							//情景	2					
 //				Sell(bc,o);
@@ -232,10 +274,17 @@ if (GetGlobalVar(10) <> 0)
 				cb=0;
 				SetGlobalVar(8,cb);							//开仓价		置0
 				SetGlobalVar(10,0);
+				SetGlobalVar(111,7);
 //				Return;
 				break;
 			}
-			If(bc!=0 and h[2]<s[2] and o[2]<c[2] and l[1]<=s[1])
+			
+			
+			
+//---------8
+
+			
+			If(bc!=0 and h[2]<s[2] and o[2]<c[2] and l[1]<=s[1])//------------------------------------------轨下阳线但未能站到轨上
 			{
 				SetGlobalVar(7,2);							//情景	2
 //				Sell(bc,o);
@@ -248,6 +297,7 @@ if (GetGlobalVar(10) <> 0)
 				cb=0;
 				SetGlobalVar(8,cb);							//开仓价 	置0
 				SetGlobalVar(10,0);
+				SetGlobalVar(111,8);
 //				Return;
 				break;
 			}
@@ -271,11 +321,16 @@ if (GetGlobalVar(10) <> 0)
 				SetGlobalVar(8,EntryPrice);					//开仓价为建仓价
 			}
 //-----------------------------------------------
-//+++++++++++++++++++++++++++++++++++++++++++++++
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++做空 情景3 、 4
 			bc_k=GetGlobalVar(3);
 			bf_k=GetGlobalVar(4);
 			sf_k=GetGlobalVar(5);
 			cb_k=GetGlobalVar(9);
+			
+			
+//---------9
+			
+			
 			If(bc_k==0 and bf_k!=1 and h[1]<x_g[1] and o[1]>=c[1])
 			{
 				SetGlobalVar(7,3);							//情景3
@@ -287,9 +342,14 @@ if (GetGlobalVar(10) <> 0)
 				bf_k=1;
 				SetGlobalVar(4,bf_k);						//内轨开仓	置1
 				SetGlobalVar(10,0);
+				SetGlobalVar(111,9);
 //				Return;	
 				break;	
 			}
+			
+//---------10
+			
+			
 			If(bc_k==0 and bf_k!=1 and h[2]<x_g[2] and o[2]<c[2] and l[1]<=s_g[1] and c[1]<s[1])
 			{
 				SetGlobalVar(7,3);							//情景3
@@ -301,9 +361,16 @@ if (GetGlobalVar(10) <> 0)
 				bf_k=1;
 				SetGlobalVar(4,bf_k);						//内轨开仓	置1
 				SetGlobalVar(10,0);
+				SetGlobalVar(111,10);
 //				Return;	
 				break;	
 			}
+			
+			
+//---------11
+
+			
+			
 			If(bc_k==0 and bf_k==-1 and h[1]<x[1] and o[1]>=c[1])
 			{
 				SetGlobalVar(7,3);							//情景3
@@ -313,6 +380,7 @@ if (GetGlobalVar(10) <> 0)
 				bf_k=0;
 				SetGlobalVar(4,bf_k);						//内轨开仓	置1
 				SetGlobalVar(10,0);
+				SetGlobalVar(111,11);
 				If(h[1]>=x_g[1])
 				{
 					sf_k=0;
@@ -326,6 +394,10 @@ if (GetGlobalVar(10) <> 0)
 //				Return;
 				break;
 			}
+			
+			
+//---------12			
+			
 			If(bc_k==0 and bf_k==-1 and h[2]<x[2] and o[2]<c[2] and l[1]<=x[1] and c[1]<s[1])
 			{
 				SetGlobalVar(7,3);							//情景3
@@ -335,6 +407,7 @@ if (GetGlobalVar(10) <> 0)
 				bf_k=0;
 				SetGlobalVar(4,bf_k);						//内轨开仓	置0
 				SetGlobalVar(10,0);
+				SetGlobalVar(111,12);
 				If(h[1]>=x_g[1])
 				{
 					sf_k=0;
@@ -348,6 +421,11 @@ if (GetGlobalVar(10) <> 0)
 //				Return;
 				break;
 			}
+			
+			
+//---------13
+			
+			
 			If(bc_k!=0 and sf_k==1 and l[1]>x_g[1] and c[1]>=o[1])
 			{
 				SetGlobalVar(7,4);							//情景4
@@ -359,6 +437,7 @@ if (GetGlobalVar(10) <> 0)
 				cb_k=0;
 				SetGlobalVar(9,cb_k);						//开仓价		置0
 				SetGlobalVar(10,0);
+				SetGlobalVar(111,13);
 				If(l[1]<=x[1])
 				{
 					bf_k=0;
@@ -372,6 +451,10 @@ if (GetGlobalVar(10) <> 0)
 //				Return;
 				break;
 			}
+			
+			
+//---------14
+			
 			If(bc_k!=0 and sf_k==1 and l[2]>x_g[2] and c[2]<o[2] and h[1]>=x_g[1])
 			{
 				SetGlobalVar(7,4);							//情景4
@@ -383,6 +466,7 @@ if (GetGlobalVar(10) <> 0)
 				cb_k=0;
 				SetGlobalVar(9,cb_k);						//开仓价		置0
 				SetGlobalVar(10,0);
+				SetGlobalVar(111,14);
 				If(l[1]<=x[1])
 				{
 					bf_k=0;
@@ -396,6 +480,10 @@ if (GetGlobalVar(10) <> 0)
 //				Return;
 				break;
 			}
+			
+			
+//---------15
+			
 			If(bc_k!=0 and l[1]>x[1] and c[1]>=o[1])
 			{
 				SetGlobalVar(7,4);							//情景4
@@ -409,9 +497,13 @@ if (GetGlobalVar(10) <> 0)
 				cb_k=0;
 				SetGlobalVar(9,cb_k);						//开仓价		置0
 				SetGlobalVar(10,0);
+				SetGlobalVar(111,15);
 //				Return;
 				break;
 			}
+			
+//---------16			
+			
 			If(bc_k!=0 and l[2]>x[2] and c[2]<o[2] and h[1]>=x[1])
 			{
 				SetGlobalVar(7,4);							//情景4
@@ -425,6 +517,7 @@ if (GetGlobalVar(10) <> 0)
 				cb_k=0;
 				SetGlobalVar(9,cb_k);						//开仓价		置0
 				SetGlobalVar(10,0);
+				SetGlobalVar(111,16);
 //				Return;
 				break;
 			}
@@ -450,12 +543,21 @@ if (GetGlobalVar(10) <> 0)
 			break;
 		}
 	}
+	//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++止盈 情景5、6
+	
+			
+
+
+	
 	if(GetGlobalVar(7)==0)
 	{
+
+//---------17
+		
 		cb=GetGlobalVar(8);
 		if(cb!=0)
 		{
-			PlotNumeric("止盈",cb*(1+bfb_z_k*0.010));
+			PlotNumeric("止盈",cb*(1+bfb_z_k*0.010));		//开仓后 算出止盈价
 		}
 		if(cb!=0 and h>=cb*(1+bfb_z_d*0.01))
 		{
@@ -465,6 +567,7 @@ if (GetGlobalVar(10) <> 0)
 			SetGlobalVar(7,5);								//情景5
 			SetGlobalVar(8,0);								//多单开仓价
 			SetGlobalVar(10,0);
+			SetGlobalVar(111,17);
 			SetGlobalVar(11,cb*(1+bfb_z_d*0.01));			//止盈价		cb*(1+bfb_z_d*0.01)
 			if(h>=s_g)
 			{
@@ -478,6 +581,13 @@ if (GetGlobalVar(10) <> 0)
 			}
 		}
 		//========
+		
+		
+			
+//---------18
+
+		
+		
 		cb_k=GetGlobalVar(9);
 		if(cb_k!=0)
 		{
@@ -491,6 +601,7 @@ if (GetGlobalVar(10) <> 0)
 			SetGlobalVar(7,6);								//情景6
 			SetGlobalVar(9,0);								//空单开仓价
 			SetGlobalVar(10,0);
+			SetGlobalVar(111,18);
 			SetGlobalVar(11,cb_k*(1-bfb_z_k*0.010));		//止盈价		cb_k*(1-bfb_z_k*0.010)
 			if(l<=x_g)
 			{
@@ -504,6 +615,7 @@ if (GetGlobalVar(10) <> 0)
 			}
 		}
 	}
+	//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++操作
 	if(MarketPosition==0 and GetGlobalVar(7)==1)
 	{
 		buy(lot,o);
@@ -568,8 +680,25 @@ if (GetGlobalVar(9)<>0)
 {
 	//PlotString("999",Text(GetGlobalVar(9)),0,Blue);
 }
+if (GetGlobalVar(111)<>GetGlobalVar(112))
+{
+//PlotString("111",text(getglobalvar(1)),0,red);
+PlotString("111",text(getglobalvar(111)),0,red);
+}
 
-PlotString("111",text(getglobalvar(1)),0,red);
+
+
+
+Commentary("1---高阶上轨---轨外阳线------------开多--------------9反之");
+Commentary("2---高阶上轨---l[2]>s_g[2] and o[2]>c[2] and h[1]>=s_g[1] and c[1]>x[1])------------开多--------------10反之");
+Commentary("5---高阶上轨---轨内阴线------------止损--------------13反之");
+Commentary("6---高阶上轨---轨内阳线未能返轨外---止损--------------14反之");
+
+Commentary("3---上轨-------轨外阳线---开多-----------------------11反之");
+Commentary("4---上轨-------bc==0 and bf==-1 and l[2]>s[2] and o[2]>c[2] and h[1]>s[1] and c[1]>x[1]---开多-----------------------12反之");
+Commentary("7---上轨-------轨内阴线---止损-----------------------15反之");
+Commentary("8---上轨-------轨内阳线未能返轨外---止损--------------16反之");
+
 End
 
 
