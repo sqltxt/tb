@@ -1,0 +1,48 @@
+//------------------------------------------------------------------------
+// 简称: Yan_kong
+// 名称: 闫老师做空
+// 类别: 公式应用
+// 类型: 用户应用
+// 输出:
+//------------------------------------------------------------------------
+
+Params
+Numeric	MA(5);
+Numeric	a(-5);
+Numeric b(2);
+Numeric Lot(1);
+Vars
+NumericSeries M;
+NumericSeries cha;
+Begin
+	If (!CallAuctionFilter()) return; 
+	if (D>MIT) Return;
+	M = AverageFC(C[1],MA);
+	cha = M-M[1];
+	Commentary("cha"+text(cha));
+	PlotNumeric("MA",M,0,white,1);
+	PlotString("△","△="+Text(Round(cha,1)),L[1]-2,IIF(cha<=b,yellow,Cyan),1);
+	PlotString("cha","cha="+Text(cha),L[1]-20,IIF(cha>=a,yellow,Cyan),1);
+	if (MarketPosition <> -1)
+	{
+		If(cha<=a And C[1]<M)
+		{
+			SellShort(Lot,O);
+		}
+	}
+	if(MarketPosition==-1)
+	{
+		if(cha>=b And C[1]>M)
+		{
+			BuyToCover(Lot,O);
+		}
+	}
+End
+
+//------------------------------------------------------------------------
+// 编译版本	GS2015.12.25
+// 用户版本	2016/04/22 15:05:56
+// 版权所有	wkjytj
+// 更改声明	TradeBlazer Software保留对TradeBlazer平台
+//			每一版本的TradeBlazer公式修改和重写的权利
+//------------------------------------------------------------------------
