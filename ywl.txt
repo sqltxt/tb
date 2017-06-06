@@ -1,0 +1,217 @@
+//------------------------------------------------------------------------
+// 简称: ywl
+// 名称: 鹦鹉螺
+// 类别: 公式应用
+// 类型: 用户应用
+// 输出:
+//------------------------------------------------------------------------
+
+Params
+	//此处添加参数
+	Numeric length(165);
+	Numeric n(65);
+	Numeric lot(1);
+	Numeric b(1);
+	Numeric b_g(7);
+	Numeric bfb_z_d(5);
+//	Numeric bfb_z_k(1);
+Vars
+	//此处添加变量
+	numeric st;
+	numeric et;
+	Numeric i;
+	Numeric r;
+	Numeric hv;
+	Numeric bc;//多单手数			0
+	Numeric bf;//内轨是否开仓		1
+	Numeric sf;//外轨是否平仓		2
+	NumericSeries s;
+	NumericSeries s_g;
+	
+	Numeric bc_k;//空单手数？		3
+	Numeric bf_k;//空单内轨是否开仓	4
+	Numeric sf_k;//空单外轨是否平仓	5
+	NumericSeries x;
+	NumericSeries x_g;
+	
+	Numeric p;
+	Numeric cb;	//					8
+	Numeric cb_k;//					9
+	Numeric bfb_z_k;
+	
+	
+	String str;
+	string filename;
+	Numeric val;
+	String hh;
+	
+	String tag;
+
+Begin
+If (!CallAuctionFilter()) Return;
+SetGlobalVar(112,GetGlobalVar(111));
+	r=0;
+	For i = 1 to n
+	{
+		r=r+(Ln(c[i]/c[i+1])-Ln(c[1]/c[n+1])/n)^2;
+	}
+	hv=(r/(n-1))^0.5;//这应该是除以n才对：hv=(r/(n-1))^0.5
+	p=Average(Close[1],Length);
+	s=p*(1+hv)^b;
+	s_g=p*(1+hv)^b_g;
+	x=p*(1-hv)^b;
+	x_g=p*(1-hv)^b_g;
+	PlotNumeric("上轨",s);
+	PlotNumeric("高阶上轨",s_g);
+	PlotNumeric("下轨",x);
+	PlotNumeric("高阶下轨",x_g);
+	
+	If (MarketPosition == 0)
+	{
+		If (l[1]>s_g[1] and o[1]<=c[1])									//开多--------------------------------------1
+		{
+			Buy(lot,O);
+			SetGlobalVar(111,1);
+			PlotString("t",text(getglobalvar(111)),h+2,white);
+			Return;
+		}
+		If(l[2]>s_g[2] and o[2]>c[2] and h[1]>=s_g[1] and c[1]>x[1])	//开多--------------------------------------2
+		{
+			Buy(lot,O);
+			SetGlobalVar(111,2);
+			PlotString("t",text(getglobalvar(111)),h+2,white);
+			Return;
+		}
+		If(l[1]>s[1] and o[1]<=c[1])									//开多--------------------------------------3
+		{
+			Buy(lot,O);
+			SetGlobalVar(111,3);
+			PlotString("t",text(getglobalvar(111)),h+2,white);
+			//Break;
+		}
+		If(l[2]>s[2] and o[2]>c[2] and h[1]>s[1] and c[1]>x[1])			//开多--------------------------------------4
+		{
+			Buy(lot,O);
+			SetGlobalVar(111,4);
+			PlotString("t",text(getglobalvar(111)),h+2,white);
+			Return;
+		}
+		If(h[1]<x_g[1] and o[1]>=c[1])									//开空--------------------------------------9
+		{
+			SellShort(lot,O);
+			SetGlobalVar(111,9);
+			PlotString("t",text(getglobalvar(111)),l-2,white);
+			Return;
+		}
+		If( h[2]<x_g[2] and o[2]<c[2] and l[1]<=s_g[1] and c[1]<s[1])	//开空--------------------------------------10
+		{
+			SellShort(lot,O);
+			SetGlobalVar(111,10);
+			PlotString("t",text(getglobalvar(111)),l-2,white);
+			Return;
+		}
+		If( h[1]<x[1] and o[1]>=c[1])									//开空--------------------------------------11
+		{
+			SellShort(lot,O);
+			SetGlobalVar(111,11);
+			PlotString("t",text(getglobalvar(111)),l-2,white);
+			Return;
+		}
+		If(h[2]<x[2] and o[2]<c[2] and l[1]<=x[1] and c[1]<s[1])		//开空--------------------------------------12
+		{
+			SellShort(lot,O);
+			SetGlobalVar(111,12);
+			PlotString("t",text(getglobalvar(111)),l-2,white);
+			return;
+		}
+	}
+	If (MarketPosition ==1)
+	{
+		If(h[2]<s_g[2] and c[2]>o[2] and l[1]<=s_g[1])					//止多--------------------------------------6
+		{
+			Sell(lot,O);
+			SetGlobalVar(111,6);
+			PlotString("t",text(getglobalvar(111)),l-2,white);
+			return;
+		}
+		If(h[1]<s_g[1] and c[1]<=o[1])									//止多--------------------------------------5
+		{
+			Sell(lot,O);
+			SetGlobalVar(111,5);
+			PlotString("t",text(getglobalvar(111)),l-2,white);
+			return;
+		}
+		If(h[1]<s[1] and o[1]>=c[1])									//止多--------------------------------------7
+		{
+			Sell(lot,O);
+			SetGlobalVar(111,7);
+			PlotString("t",text(getglobalvar(111)),l-2,white);
+			return;
+		}
+		If(h[2]<s[2] and o[2]<c[2] and l[1]<=s[1])						//止多--------------------------------------8
+		{
+			Sell(lot,O);
+			SetGlobalVar(111,8);
+			PlotString("t",text(getglobalvar(111)),l-2,white);
+			return;
+		}
+		If (EntryPrice<>0)
+		{
+			PlotNumeric("止盈",EntryPrice*(1+bfb_z_d*0.010));			//止盈--------------------------------------17
+			SetGlobalVar(111,17);
+			PlotString("t",text(getglobalvar(111)),h,white);
+		}
+	}
+	If (MarketPosition==-1)
+	{
+	
+		If(l[2]>x_g[2] and c[2]<o[2] and h[1]>=x_g[1])					//止空--------------------------------------14
+		{
+			BuyToCover(lot,O);
+			SetGlobalVar(111,14);
+			PlotString("t",text(getglobalvar(111)),h+2,white);
+			return;
+		}
+		If(l[1]>x_g[1] and c[1]>=o[1])									//止空--------------------------------------13
+		{
+			BuyToCover(lot,O);
+			SetGlobalVar(111,13);
+			PlotString("t",text(getglobalvar(111)),h+2,white);
+			return;
+		}
+		If(l[1]>x[1] and c[1]>=o[1])									//止空--------------------------------------15
+		{
+			BuyToCover(lot,O);
+			SetGlobalVar(111,15);
+			PlotString("t",text(getglobalvar(111)),h+2,white);
+			return;
+		}If(l[2]>x[2] and c[2]<o[2] and h[1]>=x[1])						//止空--------------------------------------16
+		{
+			BuyToCover(lot,O);
+			SetGlobalVar(111,16);
+			PlotString("t",text(getglobalvar(111)),h+2,white);
+			return;
+		}
+		If (EntryPrice<>0)
+		{
+			PlotNumeric("止盈",EntryPrice*(1-bfb_z_d*0.010));			//止盈--------------------------------------18
+			SetGlobalVar(111,18);
+			PlotString("t",text(getglobalvar(111)),h+2,white);
+		}
+	}
+
+if (GetGlobalVar(111)<>GetGlobalVar(112))
+{
+PlotString("111",text(getglobalvar(111)),0,red);
+}
+	Commentary(text(getglobalvar(111)));
+	Commentary(text(entryprice));
+End
+
+//------------------------------------------------------------------------
+// 编译版本	GS2015.12.25
+// 用户版本	2017/06/04 09:30:54
+// 版权所有	wkjytj
+// 更改声明	TradeBlazer Software保留对TradeBlazer平台
+//			每一版本的TradeBlazer公式修改和重写的权利
+//------------------------------------------------------------------------
