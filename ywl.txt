@@ -49,7 +49,6 @@ Vars
 
 Begin
 If (!CallAuctionFilter()) Return;
-SetGlobalVar(112,GetGlobalVar(111));
 	r=0;
 	For i = 1 to n
 	{
@@ -68,144 +67,164 @@ SetGlobalVar(112,GetGlobalVar(111));
 	
 	If (MarketPosition == 0)
 	{
-		If (l[1]>s_g[1] and o[1]<=c[1])									//开多--------------------------------------1
+		if(GetGlobalVar(0)<>2)
 		{
-			Buy(lot,O);
-			SetGlobalVar(111,1);
-			PlotString("t",text(getglobalvar(111)),h+2,white);
-			Return;
+			If (l[1]>s_g[1] and o[1]<=c[1])									//开多--------------------------------------1
+			{
+				Buy(lot,O);
+				SetGlobalVar(0,2);
+				Return;
+			}
+			If(l[2]>s_g[2] and o[2]>c[2] and h[1]>=s_g[1] and c[1]>x[1])	//开多--------------------------------------2
+			{
+				Buy(lot,O);
+				SetGlobalVar(0,2);
+				Return;
+			}
 		}
-		If(l[2]>s_g[2] and o[2]>c[2] and h[1]>=s_g[1] and c[1]>x[1])	//开多--------------------------------------2
+		if(GetGlobalVar(0)<1)
 		{
-			Buy(lot,O);
-			SetGlobalVar(111,2);
-			PlotString("t",text(getglobalvar(111)),h+2,white);
-			Return;
+			If(l[1]>s[1] and o[1]<=c[1])									//开多--------------------------------------3
+			{
+				Buy(lot,O);
+				SetGlobalVar(0,1);				
+			}
+			If(l[2]>s[2] and o[2]>c[2] and h[1]>s[1] and c[1]>x[1])			//开多--------------------------------------4
+			{
+				Buy(lot,O);
+				SetGlobalVar(0,1);
+				Return;
+			}
 		}
-		If(l[1]>s[1] and o[1]<=c[1])									//开多--------------------------------------3
+		if(GetGlobalVar(0)<>-2)
 		{
-			Buy(lot,O);
-			SetGlobalVar(111,3);
-			PlotString("t",text(getglobalvar(111)),h+2,white);
-			//Break;
+			If(h[1]<x_g[1] and o[1]>=c[1])									//开空--------------------------------------9
+			{
+				SellShort(lot,O);
+				SetGlobalVar(0,-2);
+				Return;
+			}
+			If( h[2]<x_g[2] and o[2]<c[2] and l[1]<=s_g[1] and c[1]<s[1])	//开空--------------------------------------10
+			{
+				SellShort(lot,O);
+				SetGlobalVar(0,-2);
+				Return;
+			}
 		}
-		If(l[2]>s[2] and o[2]>c[2] and h[1]>s[1] and c[1]>x[1])			//开多--------------------------------------4
+		if(GetGlobalVar(0)>-1)
 		{
-			Buy(lot,O);
-			SetGlobalVar(111,4);
-			PlotString("t",text(getglobalvar(111)),h+2,white);
-			Return;
-		}
-		If(h[1]<x_g[1] and o[1]>=c[1])									//开空--------------------------------------9
-		{
-			SellShort(lot,O);
-			SetGlobalVar(111,9);
-			PlotString("t",text(getglobalvar(111)),l-2,white);
-			Return;
-		}
-		If( h[2]<x_g[2] and o[2]<c[2] and l[1]<=s_g[1] and c[1]<s[1])	//开空--------------------------------------10
-		{
-			SellShort(lot,O);
-			SetGlobalVar(111,10);
-			PlotString("t",text(getglobalvar(111)),l-2,white);
-			Return;
-		}
-		If( h[1]<x[1] and o[1]>=c[1])									//开空--------------------------------------11
-		{
-			SellShort(lot,O);
-			SetGlobalVar(111,11);
-			PlotString("t",text(getglobalvar(111)),l-2,white);
-			Return;
-		}
-		If(h[2]<x[2] and o[2]<c[2] and l[1]<=x[1] and c[1]<s[1])		//开空--------------------------------------12
-		{
-			SellShort(lot,O);
-			SetGlobalVar(111,12);
-			PlotString("t",text(getglobalvar(111)),l-2,white);
-			return;
+			If( h[1]<x[1] and o[1]>=c[1])									//开空--------------------------------------11
+			{
+				SellShort(lot,O);
+				SetGlobalVar(0,-1);
+				Return;
+			}
+			If(h[2]<x[2] and o[2]<c[2] and l[1]<=x[1] and c[1]<s[1])		//开空--------------------------------------12
+			{
+				SellShort(lot,O);
+				SetGlobalVar(0,-1);
+				Return;
+			}
 		}
 	}
 	If (MarketPosition ==1)
 	{
-		If(h[2]<s_g[2] and c[2]>o[2] and l[1]<=s_g[1])					//止多--------------------------------------6
+		if(GetGlobalVar(0)==2)
 		{
-			Sell(lot,O);
-			SetGlobalVar(111,6);
-			PlotString("t",text(getglobalvar(111)),l-2,white);
-			return;
+			If(h[2]<s_g[2] and c[2]>o[2] and l[1]<=s_g[1])					//止多--------------------------------------6
+			{
+				Sell(lot,O);
+				SetGlobalVar(0,1);
+				return;
+			}
+			If(h[1]<s_g[1] and c[1]<=o[1])									//止多--------------------------------------5
+			{
+				Sell(lot,O);
+				SetGlobalVar(0,1);
+				return;
+			}
 		}
-		If(h[1]<s_g[1] and c[1]<=o[1])									//止多--------------------------------------5
+		if(GetGlobalVar(0)>0)
 		{
-			Sell(lot,O);
-			SetGlobalVar(111,5);
-			PlotString("t",text(getglobalvar(111)),l-2,white);
-			return;
+			If(h[1]<s[1] and o[1]>=c[1])									//止多--------------------------------------7
+			{
+				Sell(lot,O);
+				SetGlobalVar(0,0);
+				return;
+			}
+			If(h[2]<s[2] and o[2]<c[2] and l[1]<=s[1])						//止多--------------------------------------8
+			{
+				Sell(lot,O);
+				SetGlobalVar(0,0);
+				return;
+			}
 		}
-		If(h[1]<s[1] and o[1]>=c[1])									//止多--------------------------------------7
+		if (l[1]>s_g[1])
 		{
-			Sell(lot,O);
-			SetGlobalVar(111,7);
-			PlotString("t",text(getglobalvar(111)),l-2,white);
-			return;
-		}
-		If(h[2]<s[2] and o[2]<c[2] and l[1]<=s[1])						//止多--------------------------------------8
-		{
-			Sell(lot,O);
-			SetGlobalVar(111,8);
-			PlotString("t",text(getglobalvar(111)),l-2,white);
-			return;
+			SetGlobalVar(0,2);
 		}
 		If (EntryPrice<>0)
 		{
 			PlotNumeric("止盈",EntryPrice*(1+bfb_z_d*0.010));			//止盈--------------------------------------17
 			SetGlobalVar(111,17);
-			PlotString("t",text(getglobalvar(111)),h,white);
+			If(o>=EntryPrice*(1+bfb_z_d*0.010))
+			{
+				Sell(lot,o);
+				SetGlobalVar(0,2);
+			}
 		}
 	}
 	If (MarketPosition==-1)
 	{
-	
-		If(l[2]>x_g[2] and c[2]<o[2] and h[1]>=x_g[1])					//止空--------------------------------------14
+		if(GetGlobalVar(0)==-2)
 		{
-			BuyToCover(lot,O);
-			SetGlobalVar(111,14);
-			PlotString("t",text(getglobalvar(111)),h+2,white);
-			return;
+			If(l[2]>x_g[2] and c[2]<o[2] and h[1]>=x_g[1])					//止空--------------------------------------14
+			{
+				BuyToCover(lot,O);
+				SetGlobalVar(0,-1);
+				return;
+			}
+			If(l[1]>x_g[1] and c[1]>=o[1])									//止空--------------------------------------13
+			{
+				BuyToCover(lot,O);
+				SetGlobalVar(0,-1);
+				return;
+			}
 		}
-		If(l[1]>x_g[1] and c[1]>=o[1])									//止空--------------------------------------13
+		if(GetGlobalVar(0)<0)
 		{
-			BuyToCover(lot,O);
-			SetGlobalVar(111,13);
-			PlotString("t",text(getglobalvar(111)),h+2,white);
-			return;
+			If(l[1]>x[1] and c[1]>=o[1])									//止空--------------------------------------15
+			{
+				BuyToCover(lot,O);
+				SetGlobalVar(0,0);				
+				return;
+			}If(l[2]>x[2] and c[2]<o[2] and h[1]>=x[1])						//止空--------------------------------------16
+			{
+				BuyToCover(lot,O);
+				SetGlobalVar(0,0);				
+				return;
+			}
 		}
-		If(l[1]>x[1] and c[1]>=o[1])									//止空--------------------------------------15
+		if(h[1]<x_g[1])
 		{
-			BuyToCover(lot,O);
-			SetGlobalVar(111,15);
-			PlotString("t",text(getglobalvar(111)),h+2,white);
-			return;
-		}If(l[2]>x[2] and c[2]<o[2] and h[1]>=x[1])						//止空--------------------------------------16
-		{
-			BuyToCover(lot,O);
-			SetGlobalVar(111,16);
-			PlotString("t",text(getglobalvar(111)),h+2,white);
-			return;
+			SetGlobalVar(0,-2);
 		}
 		If (EntryPrice<>0)
 		{
 			PlotNumeric("止盈",EntryPrice*(1-bfb_z_d*0.010));			//止盈--------------------------------------18
-			SetGlobalVar(111,18);
-			PlotString("t",text(getglobalvar(111)),h+2,white);
+			SetGlobalVar(111,18);			
+			if(o<=EntryPrice*(1-bfb_z_d*0.010))
+			{				
+				BuyToCover(lot,o);
+				SetGlobalVar(0,-2);
+			}
 		}
 	}
-
-if (GetGlobalVar(111)<>GetGlobalVar(112))
+if(l[1]>x[1] and h[1]<s[1])
 {
-PlotString("111",text(getglobalvar(111)),0,red);
+	SetGlobalVar(0,0);
 }
-	Commentary(text(getglobalvar(111)));
-	Commentary(text(entryprice));
+Commentary("getglobalvar(0)-------:  "+text(getglobalvar(0)));
 End
 
 //------------------------------------------------------------------------
