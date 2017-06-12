@@ -46,9 +46,17 @@ Vars
 	String hh;
 	
 	String tag;
+	
+	NumericSeries Position;
 
 Begin
+
+//C:\Users\Administrator\Documents\tbv5321_x64_portable
+
+
 If (!CallAuctionFilter()) Return;
+
+
 	r=0;
 	For i = 1 to n
 	{
@@ -67,164 +75,220 @@ If (!CallAuctionFilter()) Return;
 	
 	If (MarketPosition == 0)
 	{
-		if(GetGlobalVar(0)<>2)
+		if(l[1]>x[1] and h[1]<s[1])
 		{
-			If (l[1]>s_g[1] and o[1]<=c[1])									//开多--------------------------------------1
+			//Position=0
+			Position=0;
+		}
+		//if(GetGlobalVar(0)<>2)
+		if(Position<>2)
+		{
+			If (l[1]>s_g[1] and o[1]<=c[1])									//开多--------------------------------------1  :  0-->2
 			{
 				Buy(lot,O);
-				SetGlobalVar(0,2);
+				//PlotString("flag","1:"+text(GetGlobalVar(0))+"-->2",s_g+20,white);
+				//SetGlobalVar(0,2);
+				PlotString("flag","1:"+text(Position)+"-->2",s_g+20,white);
+				Position=2;
+				If (D ==CurrentDate) FileAppend("C:\\交易机会_"+Text(CurrentDate)+".txt",TimeToString(Time)  +": ywl ： 外轨开多1");
 				Return;
 			}
-			If(l[2]>s_g[2] and o[2]>c[2] and h[1]>=s_g[1] and c[1]>x[1])	//开多--------------------------------------2
+			If(l[2]>s_g[2] and o[2]>c[2] and h[1]>=s_g[1] and c[1]>x[1])	//开多--------------------------------------2  :  0-->2
 			{
 				Buy(lot,O);
-				SetGlobalVar(0,2);
+				PlotString("flag","2:"+text(Position)+"-->2",s_g+20,white);
+				Position=2;
+				If (D ==CurrentDate) FileAppend("C:\\交易机会_"+Text(CurrentDate)+".txt",TimeToString(Time)  +": ywl  ： 外轨开多2");
 				Return;
 			}
 		}
-		if(GetGlobalVar(0)<1)
+		if(Position<1)
 		{
-			If(l[1]>s[1] and o[1]<=c[1])									//开多--------------------------------------3
+			If(l[1]>s[1] and o[1]<=c[1])									//开多--------------------------------------3  :  0-->1
 			{
 				Buy(lot,O);
-				SetGlobalVar(0,1);				
+				PlotString("flag","3:"+text(Position)+"-->1",s_g+20,white);
+				Position=1	;	
+				If (D ==CurrentDate) FileAppend("C:\\交易机会_"+Text(CurrentDate)+".txt",TimeToString(Time)  +": ywl  ： 内轨开多3");
 			}
-			If(l[2]>s[2] and o[2]>c[2] and h[1]>s[1] and c[1]>x[1])			//开多--------------------------------------4
+			If(l[2]>s[2] and o[2]>c[2] and h[1]>s[1] and c[1]>x[1])			//开多--------------------------------------4  :  0-->1
 			{
 				Buy(lot,O);
-				SetGlobalVar(0,1);
+				PlotString("flag","4:"+text(Position)+"-->1",s_g+20,white);
+				Position=1;
+				If (D ==CurrentDate) FileAppend("C:\\交易机会_"+Text(CurrentDate)+".txt",TimeToString(Time)  +": ywl  ： 内轨开多4");
 				Return;
 			}
 		}
-		if(GetGlobalVar(0)<>-2)
+		if(Position<>-2)
 		{
-			If(h[1]<x_g[1] and o[1]>=c[1])									//开空--------------------------------------9
+			If(h[1]<x_g[1] and o[1]>=c[1])									//开空--------------------------------------9  :  0-->-2
 			{
 				SellShort(lot,O);
-				SetGlobalVar(0,-2);
+				PlotString("flag","9:"+text(Position)+"-->-2",s_g+20,white);
+				Position=-2;
+				If (D ==CurrentDate) FileAppend("C:\\交易机会_"+Text(CurrentDate)+".txt",TimeToString(Time)  +": ywl  ： 外轨开空9");
 				Return;
 			}
-			If( h[2]<x_g[2] and o[2]<c[2] and l[1]<=s_g[1] and c[1]<s[1])	//开空--------------------------------------10
+			If( h[2]<x_g[2] and o[2]<c[2] and l[1]<=s_g[1] and c[1]<s[1])	//开空--------------------------------------10  :  0-->-2
 			{
 				SellShort(lot,O);
-				SetGlobalVar(0,-2);
+				PlotString("flag","10:"+text(Position)+"-->-2",s_g+20,white);
+				Position=-2;
+				If (D ==CurrentDate) FileAppend("C:\\交易机会_"+Text(CurrentDate)+".txt",TimeToString(Time)  +": ywl  ： 外轨开空10");
 				Return;
 			}
 		}
-		if(GetGlobalVar(0)>-1)
+		if(Position>-1)
 		{
-			If( h[1]<x[1] and o[1]>=c[1])									//开空--------------------------------------11
+			If( h[1]<x[1] and o[1]>=c[1])									//开空--------------------------------------11  :  0-->-1
 			{
 				SellShort(lot,O);
-				SetGlobalVar(0,-1);
+				PlotString("flag","11:"+text(Position)+"-->-1",s_g+20,white);
+				Position=-1;
+				If (D ==CurrentDate) FileAppend("C:\\交易机会_"+Text(CurrentDate)+".txt",TimeToString(Time)  +": ywl  ： 内轨开空11");
 				Return;
 			}
-			If(h[2]<x[2] and o[2]<c[2] and l[1]<=x[1] and c[1]<s[1])		//开空--------------------------------------12
+			If(h[2]<x[2] and o[2]<c[2] and l[1]<=x[1] and c[1]<s[1])		//开空--------------------------------------12  :  0-->-1
 			{
 				SellShort(lot,O);
-				SetGlobalVar(0,-1);
+				PlotString("flag","12:"+text(Position)+"-->-1",s_g+20,white);
+				Position=-1;
+				If (D ==CurrentDate) FileAppend("C:\\交易机会_"+Text(CurrentDate)+".txt",TimeToString(Time)  +": ywl  ： 内轨开空12");
 				Return;
 			}
 		}
 	}
 	If (MarketPosition ==1)
 	{
-		if(GetGlobalVar(0)==2)
+		if(Position==2)
 		{
-			If(h[2]<s_g[2] and c[2]>o[2] and l[1]<=s_g[1])					//止多--------------------------------------6
+			If(h[2]<s_g[2] and c[2]>o[2] and l[1]<=s_g[1])					//止多--------------------------------------6  :  0-->1
 			{
 				Sell(lot,O);
-				SetGlobalVar(0,1);
+				PlotString("flag","6:"+text(Position)+"-->1",s_g+20,white);
+				Position=1;
+				If (D ==CurrentDate) FileAppend("C:\\交易机会_"+Text(CurrentDate)+".txt",TimeToString(Time)  +": ywl  ： 外轨止多6");
 				return;
 			}
-			If(h[1]<s_g[1] and c[1]<=o[1])									//止多--------------------------------------5
+			If(h[1]<s_g[1] and c[1]<=o[1])									//止多--------------------------------------5  :  0-->2
 			{
 				Sell(lot,O);
-				SetGlobalVar(0,1);
+				PlotString("flag","5:"+text(Position)+"-->1",s_g+20,white);
+				Position=1;
+				If (D ==CurrentDate) FileAppend("C:\\交易机会_"+Text(CurrentDate)+".txt",TimeToString(Time)  +": ywl  ： 外轨止多5");
 				return;
 			}
 		}
-		if(GetGlobalVar(0)>0)
+		if(Position>0)
 		{
 			If(h[1]<s[1] and o[1]>=c[1])									//止多--------------------------------------7
 			{
 				Sell(lot,O);
-				SetGlobalVar(0,0);
+				PlotString("flag","7:"+text(Position)+"-->0",s_g+20,white);
+				Position=0;
+				If (D ==CurrentDate) FileAppend("C:\\交易机会_"+Text(CurrentDate)+".txt",TimeToString(Time)  +": ywl  ： 内轨止多7");
 				return;
 			}
 			If(h[2]<s[2] and o[2]<c[2] and l[1]<=s[1])						//止多--------------------------------------8
 			{
 				Sell(lot,O);
-				SetGlobalVar(0,0);
+				PlotString("flag","8:"+text(Position)+"-->0",s_g+20,white);
+				Position=0;
+				If (D ==CurrentDate) FileAppend("C:\\交易机会_"+Text(CurrentDate)+".txt",TimeToString(Time)  +": ywl  ： 外轨止多8");
 				return;
 			}
 		}
-		if (l[1]>s_g[1])
+		if (Position<>2)
 		{
-			SetGlobalVar(0,2);
+			if (l[1]>s_g[1])
+			{
+				PlotString("flag","20:"+text(Position)+"-->2",s_g+20,white);//-----------------------------------------------20
+				Position=2;
+				If (D ==CurrentDate) FileAppend("C:\\交易机会_"+Text(CurrentDate)+".txt",TimeToString(Time)  +": ywl  ： 多单二档止盈20");
+			}
 		}
 		If (EntryPrice<>0)
 		{
-			PlotNumeric("止盈",EntryPrice*(1+bfb_z_d*0.010));			//止盈--------------------------------------17
-			SetGlobalVar(111,17);
+			PlotNumeric("止盈",EntryPrice*(1+bfb_z_d*0.010));				//止盈--------------------------------------17			
 			If(o>=EntryPrice*(1+bfb_z_d*0.010))
 			{
 				Sell(lot,o);
-				SetGlobalVar(0,2);
+				PlotString("flag","17:"+text(Position)+"-->2",s_g+20,white);
+				
+				Position=2;
+				If (D ==CurrentDate) FileAppend("C:\\交易机会_"+Text(CurrentDate)+".txt",TimeToString(Time)  +": ywl  ： 多单止盈价格17");
 			}
 		}
 	}
 	If (MarketPosition==-1)
 	{
-		if(GetGlobalVar(0)==-2)
+		if(Position==-2)
 		{
 			If(l[2]>x_g[2] and c[2]<o[2] and h[1]>=x_g[1])					//止空--------------------------------------14
 			{
 				BuyToCover(lot,O);
-				SetGlobalVar(0,-1);
+				PlotString("flag","14:"+text(Position)+"-->-1",s_g+20,white);
+				Position=-1;
+				If (D ==CurrentDate) FileAppend("C:\\交易机会_"+Text(CurrentDate)+".txt",TimeToString(Time)  +": ywl  ： 外轨止空14");
 				return;
 			}
 			If(l[1]>x_g[1] and c[1]>=o[1])									//止空--------------------------------------13
 			{
 				BuyToCover(lot,O);
-				SetGlobalVar(0,-1);
+				PlotString("flag","13:"+text(Position)+"-->-1",s_g+20,white);
+				Position=-1;
+				If (D ==CurrentDate) FileAppend("C:\\交易机会_"+Text(CurrentDate)+".txt",TimeToString(Time)  +": ywl  ： 外轨止空13");
 				return;
 			}
 		}
-		if(GetGlobalVar(0)<0)
+		if(Position<0)
 		{
 			If(l[1]>x[1] and c[1]>=o[1])									//止空--------------------------------------15
 			{
 				BuyToCover(lot,O);
-				SetGlobalVar(0,0);				
+				PlotString("flag","15:"+text(Position)+"-->0",s_g+20,white);
+				Position=0;				
+				If (D ==CurrentDate) FileAppend("C:\\交易机会_"+Text(CurrentDate)+".txt",TimeToString(Time)  +": ywl  ： 内轨止空15");
 				return;
 			}If(l[2]>x[2] and c[2]<o[2] and h[1]>=x[1])						//止空--------------------------------------16
 			{
 				BuyToCover(lot,O);
-				SetGlobalVar(0,0);				
+				PlotString("flag","16:"+text(Position)+"-->0",s_g+20,white);
+				Position=0	;			
+				If (D ==CurrentDate) FileAppend("C:\\交易机会_"+Text(CurrentDate)+".txt",TimeToString(Time)  +": ywl  ： 内轨止空16");
 				return;
 			}
 		}
-		if(h[1]<x_g[1])
+		if (Position<>-2)
 		{
-			SetGlobalVar(0,-2);
+			if(h[1]<x_g[1])
+			{
+				PlotString("flag","21:"+text(Position)+"-->-2",s_g+20,white);//-----------------------------------------------------------21
+				Position=-2;
+				If (D ==CurrentDate) FileAppend("C:\\交易机会_"+Text(CurrentDate)+".txt",TimeToString(Time)  +": ywl  ： 空单二档止盈21");
+			}
 		}
 		If (EntryPrice<>0)
 		{
-			PlotNumeric("止盈",EntryPrice*(1-bfb_z_d*0.010));			//止盈--------------------------------------18
-			SetGlobalVar(111,18);			
+			PlotNumeric("止盈",EntryPrice*(1-bfb_z_d*0.010));				//止盈--------------------------------------18				
 			if(o<=EntryPrice*(1-bfb_z_d*0.010))
 			{				
 				BuyToCover(lot,o);
-				SetGlobalVar(0,-2);
+				PlotString("flag","18:"+text(Position)+"-->-2",s_g+20,white);
+				Position=-2;
+				If (D ==CurrentDate) FileAppend("C:\\交易机会_"+Text(CurrentDate)+".txt",TimeToString(Time)  +": ywl  ： 空单止盈价格18");
 			}
 		}
 	}
-if(l[1]>x[1] and h[1]<s[1])
+
+Commentary("Position-------:  "+text(Position));
+if (Position[1]<>Position)
 {
-	SetGlobalVar(0,0);
+	PlotString("wz","位置："+text(Position),0,yellow);
+	//SetGlobalVar(1,Position);
 }
-Commentary("getglobalvar(0)-------:  "+text(getglobalvar(0)));
+
 End
 
 //------------------------------------------------------------------------
