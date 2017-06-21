@@ -1,0 +1,83 @@
+//------------------------------------------------------------------------
+// 简称: Chan
+// 名称: 缠论
+// 类别: 公式应用
+// 类型: 用户应用
+// 输出:
+//------------------------------------------------------------------------
+
+Params
+Numeric	N(5);
+Vars
+StringSeries	HL;//顶分 低分
+Numeric	X;
+Begin
+	If (BarStatus==0)
+	{
+		HL="";
+	}
+	//顶分型底分型
+	If(	H[2]<H[1] && H[1]>H )
+	{
+		If(	L[2]<L[1] && L[1]>L )
+		{
+			HL="H";//顶分型
+			//PlotNumeric("X",H[1],0,White,1);
+		}
+		Else
+		{
+			HL=HL[1];
+		}
+		
+	}
+	If(	H[2]>H[1] && H[1]<H )
+	{
+		If(	L[2]>L[1] && L[1]<L )
+		{
+			HL="L";//底分型
+			//PlotNumeric("X",L[1],0,White,1);
+		}
+		Else
+		{
+			HL=HL[1];
+		}
+		
+	}
+	Commentary(IIFString(HL=="L","底","顶")+"分型");
+	
+	//K线合并
+	If(HL=="L")
+	{	
+		//If((H[1]>H && L[1]<L) Or (H[1]<H && L[1]>L))
+		If((H>H[1] && L<L[1] Or H<H[1] && L>L[1]))
+		{
+			Unplot("K",1);
+			PlotNumeric("K",MAX(L,L[1]),MAX(H,H[1]),RED);
+		}
+		Else
+		{
+			PlotNumeric("K",L,H,Red);
+		}
+	}
+	If(HL=="H")
+	{
+		//If((H[1]<H && L[1]>L) Or (H[1]>H && L[1]<L))
+		If((H>H[1] && L<L[1] Or H<H[1] && L>L[1]))
+		{
+			Unplot("K",1);
+			PlotNumeric("K",Min(L,L[1]),Min(H,H[1]),Blue);
+		}
+		Else
+		{
+			PlotNumeric("K",L,H,Blue);
+		}
+	}
+End
+
+//------------------------------------------------------------------------
+// 编译版本	GS2010.12.08
+// 用户版本	2012/11/20 12:47
+// 版权所有	sqltxt
+// 更改声明	TradeBlazer Software保留对TradeBlazer平台
+//			每一版本的TrabeBlazer公式修改和重写的权利
+//------------------------------------------------------------------------
