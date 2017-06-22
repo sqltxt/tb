@@ -201,7 +201,14 @@ If (!CallAuctionFilter()) Return;
 	{
 		if(l[1]>x[1] and h[1]<s[1])
 		{
-			//Position=0
+			Position=0;
+		}
+		if(Position == 1 And h[1]<s[1])
+		{
+			Position=0;
+		}
+		if(Position == -1 And l[1]>x[1])
+		{
 			Position=0;
 		}
 		if(Position[1]== 2 And L[1]<s_g[1])
