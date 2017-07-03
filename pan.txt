@@ -16,9 +16,13 @@ Numeric	DM_L;
 NumericSeries flag;
 Numeric fff;
 String ggg;
+Numeric color;
+  
 Begin
 HHH = Max(O,C);						//去影线
 LLL = Min(O,C);						//去影线
+color = Green;
+Commentary("color = " + text(color));
 
 
 If(HHH>HHH[1])						//创新高
@@ -28,7 +32,10 @@ If(HHH>HHH[1])						//创新高
 		fff = 1;
 		Commentary("上挫出");
 		flag = 1;
-		PlotNumeric("k",HHH[1],HHH,red);
+		DM_L = HHH[1];
+		DM_H = HHH;
+		color = red;
+		//PlotNumeric("k",HHH[1],HHH,255);
 	}
 	Else If(LLL<LLL[1])			  			//右包左
 	{
@@ -39,13 +46,19 @@ If(HHH>HHH[1])						//创新高
 		{
 			Commentary("向上");
 			ggg = "↑";
-			PlotNumeric("k",LLL[1],HHH,red);
+			DM_L = LLL[1];
+		    DM_H = HHH;
+		   color = red;
+			//PlotNumeric("k",LLL[1],HHH,255);
 		}
 		Else						//向下------------------------------------------------------------------------------------------------2↓
 		{
 			ggg = "↓";
 			Commentary("向下");
-			PlotNumeric("k",LLL,HHH[1],Green);
+			DM_L = LLL;
+		    DM_H = HHH[1];
+		   color = Green;
+			//PlotNumeric("k",LLL,HHH[1],65280);
 		}
 	}
 	Else //(LLL==LLL[1])		    	//相等---右包左
@@ -57,13 +70,19 @@ If(HHH>HHH[1])						//创新高
 		{
 			ggg = "↑";
 			Commentary("向上");
-			PlotNumeric("k",LLL[1],HHH,red);
+			DM_L = LLL[1];
+		    DM_H = HHH;
+		   color = Red;
+			//PlotNumeric("k",DM_L,DM_H,color);
 		}
 		Else						//向下//----------------------------------------------------------------------------------------------3↓
 		{
 			ggg = "↓";
 			Commentary("向下");
-			PlotNumeric("k",LLL,HHH[1],Green);
+			DM_L = LLL;
+		    DM_H = HHH[1];
+		   color = Green;
+			//PlotNumeric("k",LLL,HHH[1],65280);
 		}
 	}
 }
@@ -74,7 +93,10 @@ Else If(HHH<HHH[1]) 				//未创新高
 		fff =4;							//-------------------------------------------------------------------------------------------------4
 		flag = 1;
 		Commentary("下挫出");
-		PlotNumeric("k",LLL,LLL[1],Green);
+		DM_L = LLL;
+		DM_H = LLL[1];
+		color = Green;
+		//PlotNumeric("k",LLL,LLL[1],65280);
 	}
 	Else If (LLL>LLL[1])					//左包右
 	{
@@ -86,13 +108,19 @@ Else If(HHH<HHH[1]) 				//未创新高
 			
 			ggg = "↓";
 			Commentary("向下");
-			PlotNumeric("k",LLL[1],LLL[1]+hhh-LLL,Green);
+			DM_L = LLL[1];
+		    DM_H = LLL[1]+hhh-LLL;
+		   color = Green;
+			//PlotNumeric("k",LLL[1],LLL[1]+hhh-LLL,65280);
 		}
 		Else							//------------------------------------------------------------------------------------------------5↑
 		{
 			ggg = "↑";
 			Commentary("向上");
-			PlotNumeric("k",LLL,HHH[1],red);
+			DM_L = LLL;
+		    DM_H = hhh[1];
+		   color = Red;
+			//PlotNumeric("k",LLL,HHH[1],255);
 		}
 	}
 	Else//(LLL==LLL[1])		    		//相等--左包右
@@ -105,13 +133,19 @@ Else If(HHH<HHH[1]) 				//未创新高
 			
 			ggg = "↓";
 			Commentary("向下");
-			PlotNumeric("k",LLL[1],LLL[1]+hhh-LLL,Green);
+			DM_L = LLL[1];
+		    DM_H = LLL[1]+hhh-LLL;
+		   color = Green;
+			//PlotNumeric("k",LLL[1],LLL[1]+hhh-LLL,65280);
 		}
 		Else							//------------------------------------------------------------------------------------------------6↑
 		{
 			ggg = "↑";
 			Commentary("向上");
-			PlotNumeric("k",LLL,LLL+hhh-LLL,red);
+			DM_L = LLL;
+		    DM_H = LLL+hhh-LLL;
+		   color = Red;
+			//PlotNumeric("k",LLL,LLL+hhh-LLL,255);
 		}
 	}
 }
@@ -125,13 +159,19 @@ Else //(HHH==HHH[1])
 		{
 			ggg = "↓";
 			Commentary("向下");
-			PlotNumeric("k",LLL,LLL[1],Green);
+			DM_L = LLL;
+		    DM_H = LLL[1];
+		   color = Green;
+			//PlotNumeric("k",LLL,LLL[1],65280);
 		}
 		Else							//------------------------------------------------------------------------------------------------7↑
 		{
 			ggg = "↑";
 			Commentary("向上");
-			PlotNumeric("k",LLL,HHH[1],red);
+			DM_L = LLL;
+		    DM_H = hhh[1];
+		   color = Red;
+			//PlotNumeric("k",LLL,HHH[1],255);
 		}
 	}
 	Else If (LLL>LLL[1])					//左包右
@@ -143,13 +183,19 @@ Else //(HHH==HHH[1])
 		{
 			ggg = "↓";
 			Commentary("向下");
-			PlotNumeric("k",LLL[1],lll[1]+hhh-LLL,Green);
+			DM_L = LLL[1];
+		    DM_H = lll[1]+hhh-LLL;
+		   color = Green;
+			//PlotNumeric("k",LLL[1],lll[1]+hhh-LLL,65280);
 		}
 		Else							//------------------------------------------------------------------------------------------------8↑
 		{
 			ggg = "↑";
 			Commentary("向上");
-			PlotNumeric("k",LLL,HHH[1],red);
+			DM_L = LLL;
+		    DM_H = hhh[1];
+		   color = Red;
+			//PlotNumeric("k",LLL,HHH[1],255);
 		}
 	}
 	Else//(LLL==LLL[1])		    		//相等--左包右
@@ -161,32 +207,38 @@ Else //(HHH==HHH[1])
 		{
 			ggg = "↓";
 			Commentary("向下");
-			PlotNumeric("k",LLL[1],lll[1]+hhh-LLL,Green);
+			DM_L = LLL[1];
+		    DM_H = lll[1]+hhh-LLL;
+		   color = Green;
+			//PlotNumeric("k",LLL[1],lll[1]+hhh-LLL,65280);
 		}
 		Else            //------------------------------------------------------------------------------------------------9↑
 		{
 			ggg = "↑";
 			Commentary("向上");
-			PlotNumeric("k",LLL,LLL+hhh-LLL,red);
+			DM_L = LLL;
+		    DM_H = LLL+hhh-LLL;
+		   color = Red;
+			//PlotNumeric("k",LLL,LLL+hhh-LLL,255);
 		}
 	}
 }
-PlotString("fff",Text(fff)+ggg,0,IIF(fff == 1,Red,IIF(fff ==4,green,white)));
-If (HHH == HHH[1]) PlotNumeric("kh",hhh,0,red);
-If (LLL == LLL[1]) PlotNumeric("kl",lll,0,green);
+PlotString("fff",Text(fff)+ggg,0,IIF(fff == 1,255,IIF(fff ==4,65280,white)));
+//If (HHH == HHH[1]) PlotNumeric("kh",hhh,0,255);
+//If (LLL == LLL[1]) PlotNumeric("kl",lll,0,65280);
 /*
 If (HHH>HHH[1] And LLL>LLL[1]) 			//右超左
 {
 	
 	Commentary("右超左");
-	PlotNumeric("k",HHH[1],HHH,red);
+	//PlotNumeric("k",HHH[1],HHH,255);
 	flag = 1;
 	Return;
 }
 If (HHH<HHH[1] And LLL<LLL[1]) 			//左超右	
 {
 	Commentary("左超右");
-	PlotNumeric("k",LLL,LLL[1],Green);
+	//PlotNumeric("k",LLL,LLL[1],65280);
 	flag = 1;
 	Return;
 }
@@ -197,12 +249,12 @@ If(HHH>HHH[1] And LLL<LLL[1]) 			//右包左
 	If(HHH>HHH[flag])					//向上
 	{
 		Commentary("向上");
-		PlotNumeric("k",LLL[1],HHH,red);
+		//PlotNumeric("k",LLL[1],HHH,red);
 	}
 	If(LLL<LLL[flag])					//向下
 	{
 		Commentary("向下");
-		PlotNumeric("k",LLL,HHH[1],Green);
+		//PlotNumeric("k",LLL,HHH[1],65280);
 	}
 	flag = flag+1;
 	Return;
@@ -213,12 +265,12 @@ If(HHH>HHH[1] And LLL<LLL[1]) 			//左包右
 	If(HHH>HHH[flag])					//向上
 	{
 		Commentary("向上");
-		PlotNumeric("k",LLL,HHH[1],red);
+		//PlotNumeric("k",LLL,HHH[1],red);
 	}
 	If(LLL<LLL[flag])								//向下
 	{
 		Commentary("向下");
-		PlotNumeric("k",LLL[1],HHH,Green);
+		//PlotNumeric("k",LLL[1],HHH,65280);
 	}
 	flag = flag+1;
 	Return;
@@ -231,6 +283,12 @@ If(HHH>HHH[1] And LLL<LLL[1]) 			//左包右
 //Commentary("底 = "+text(lll));
 //Commentary("顶 = "+text(hhh));
 }
+Commentary("顶 = "+text(DM_H));
+Commentary("底 = "+text(DM_L));
+Commentary("柱高 = "+text(DM_H-DM_L));
+//PlotNumeric("k1",DM_L,DM_H,color);//IIF(color>0,color,white));
+//If (DM_L<>InvalidNumeric or DM_H<>InvalidNumeric) 
+PlotNumeric("k1",DM_L,DM_H,color);
 PlotNumeric("1",up,0,white,0);
 PlotNumeric("2",Down,0,white,0);
 End
