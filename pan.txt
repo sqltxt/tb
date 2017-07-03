@@ -12,6 +12,8 @@ NumericSeries LLL;
 Numeric DM_H;
 Numeric	DM_L;
 NumericSeries flag;
+Numeric fff;
+String ggg;
 Begin
 HHH = Max(O,C);						//去影线
 LLL = Min(O,C);						//去影线
@@ -21,21 +23,43 @@ If(HHH>HHH[1])						//创新高
 {
 	If(LLL>LLL[1])					//上挫出
 	{
+		fff = 1;
 		Commentary("上挫出");
 		flag = 1;
 		PlotNumeric("k",HHH[1],HHH,red);
 	}
-	Else If(LLL<=LLL[1])			 //右包左
+	Else If(LLL<LLL[1])			 //右包左
 	{
+		fff =2;
 		Commentary("右包左");
 		flag = flag+1;
-		If(HHH>HHH[flag])			//向上
+		If(HHH>=HHH[flag])			//向上
 		{
+			Commentary("向上");
+			ggg = "↑";
+			PlotNumeric("k",LLL[1],HHH,red);
+		}
+		Else						//向下
+		{
+			ggg = "↓";
+			Commentary("向下");
+			PlotNumeric("k",LLL,HHH[1],Green);
+		}
+	}
+	Else //(LLL==LLL[1])		    //相等
+	{
+		fff =3;
+		Commentary("右包左");
+		flag = flag+1;
+		If(HHH>=HHH[flag])			//向上
+		{
+			ggg = "↑";
 			Commentary("向上");
 			PlotNumeric("k",LLL[1],HHH,red);
 		}
 		Else						//向下
 		{
+			ggg = "↓";
 			Commentary("向下");
 			PlotNumeric("k",LLL,HHH[1],Green);
 		}
@@ -45,37 +69,108 @@ Else If(HHH<HHH[1]) 				//未创新高
 {
 	If(LLL<LLL[1])					//下挫出
 	{
+		fff =4;
 		flag = 1;
 		Commentary("下挫出");
 		PlotNumeric("k",LLL,LLL[1],Green);
 	}
-	Else							//左包右
+	Else If (LLL>LLL[1])			//左包右
 	{
+		fff =5;
 		Commentary("左包右");
 		flag = flag+1;
-		If(LLL<LLL[flag])
+		If(LLL<=LLL[flag])
 		{
+			
+			ggg = "↓";
 			Commentary("向下");
 			PlotNumeric("k",LLL[1],HHH,Green);
 		}
 		Else
 		{
+			ggg = "↑";
+			Commentary("向上");
+			PlotNumeric("k",LLL,HHH[1],red);
+		}
+	}
+	Else//(LLL==LLL[1])		    //相等
+	{
+		fff =6;
+		Commentary("左包右");
+		flag = flag+1;
+		If(LLL<LLL[flag])
+		{
+			ggg = "↓";
+			Commentary("向下");
+			PlotNumeric("k",LLL[1],HHH,Green);
+		}
+		Else
+		{
+			ggg = "↑";
 			Commentary("向上");
 			PlotNumeric("k",LLL,HHH[1],red);
 		}
 	}
 }
-Else
+Else //(HHH==HHH[1])	
 {
-	If(LLL==LLL[1])
+	If(LLL<LLL[1])					//右包左
 	{
-		flag = 1;
-		Commentary("中包含");
+		fff =7;
+		flag = flag+1;
+		If(LLL<LLL[flag])
 		{
+			ggg = "↓";
+			Commentary("向下");
+			PlotNumeric("k",LLL,LLL[1],Green);
+		}
+		Else
+		{
+			ggg = "↑";
+			Commentary("向上");
+			PlotNumeric("k",LLL,HHH[1],red);
+		}
+	}
+	Else If (LLL>LLL[1])			//左包右
+	{
+		fff =8;
+		Commentary("左包右");
+		flag = flag+1;
+		If(LLL<LLL[flag])
+		{
+			ggg = "↓";
+			Commentary("向下");
 			PlotNumeric("k",LLL[1],HHH,Green);
+		}
+		Else
+		{
+			ggg = "↑";
+			Commentary("向上");
+			PlotNumeric("k",LLL,HHH[1],red);
+		}
+	}
+	Else//(LLL==LLL[1])		    //相等
+	{
+		fff =9;
+		Commentary("左包右");
+		flag = flag+1;
+		If(LLL<LLL[flag])
+		{
+			ggg = "↓";
+			Commentary("向下");
+			PlotNumeric("k",LLL[1],HHH,Green);
+		}
+		Else
+		{
+			ggg = "↑";
+			Commentary("向上");
+			PlotNumeric("k",LLL,HHH[1],red);
 		}
 	}
 }
+PlotString("fff",Text(fff)+ggg,0,IIF(fff == 1,Red,IIF(fff ==4,green,white)));
+If (HHH == HHH[1]) PlotNumeric("kh",hhh,0,red);
+If (LLL == LLL[1]) PlotNumeric("kl",lll,0,green);
 /*
 If (HHH>HHH[1] And LLL>LLL[1]) 			//右超左
 {
