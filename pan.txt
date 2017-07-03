@@ -1,11 +1,13 @@
 //------------------------------------------------------------------------
-// 简称: pan
+// 简称:  
 // 名称: 潘敬
 // 类别: 公式应用
 // 类型: 用户应用
 // 输出:
 //------------------------------------------------------------------------
-
+Params
+Numeric up(6450);
+Numeric Down(6300);
 Vars
 NumericSeries HHH;
 NumericSeries LLL;
@@ -21,43 +23,43 @@ LLL = Min(O,C);						//去影线
 
 If(HHH>HHH[1])						//创新高
 {
-	If(LLL>LLL[1])					//上挫出
+	If(LLL>LLL[1])							//上挫出---------------------------------------------------------------------------------------1
 	{
 		fff = 1;
 		Commentary("上挫出");
 		flag = 1;
 		PlotNumeric("k",HHH[1],HHH,red);
 	}
-	Else If(LLL<LLL[1])			 //右包左
+	Else If(LLL<LLL[1])			  			//右包左
 	{
 		fff =2;
 		Commentary("右包左");
 		flag = flag+1;
-		If(HHH>=HHH[flag])			//向上
+		If(HHH>=HHH[flag])			//向上------------------------------------------------------------------------------------------------2↑
 		{
 			Commentary("向上");
 			ggg = "↑";
 			PlotNumeric("k",LLL[1],HHH,red);
 		}
-		Else						//向下
+		Else						//向下------------------------------------------------------------------------------------------------2↓
 		{
 			ggg = "↓";
 			Commentary("向下");
 			PlotNumeric("k",LLL,HHH[1],Green);
 		}
 	}
-	Else //(LLL==LLL[1])		    //相等
+	Else //(LLL==LLL[1])		    	//相等---右包左
 	{
 		fff =3;
 		Commentary("右包左");
 		flag = flag+1;
-		If(HHH>=HHH[flag])			//向上
+		If(HHH>=HHH[flag])			//向上------------------------------------------------------------------------------------------------3↑
 		{
 			ggg = "↑";
 			Commentary("向上");
 			PlotNumeric("k",LLL[1],HHH,red);
 		}
-		Else						//向下
+		Else						//向下//----------------------------------------------------------------------------------------------3↓
 		{
 			ggg = "↓";
 			Commentary("向下");
@@ -67,104 +69,105 @@ If(HHH>HHH[1])						//创新高
 }
 Else If(HHH<HHH[1]) 				//未创新高
 {
-	If(LLL<LLL[1])					//下挫出
+	If(LLL<LLL[1])							//下挫出
 	{
-		fff =4;
+		fff =4;							//-------------------------------------------------------------------------------------------------4
 		flag = 1;
 		Commentary("下挫出");
 		PlotNumeric("k",LLL,LLL[1],Green);
 	}
-	Else If (LLL>LLL[1])			//左包右
+	Else If (LLL>LLL[1])					//左包右
 	{
 		fff =5;
 		Commentary("左包右");
 		flag = flag+1;
-		If(LLL<=LLL[flag])
+		If(LLL<=LLL[flag])				//------------------------------------------------------------------------------------------------5↓
 		{
 			
 			ggg = "↓";
 			Commentary("向下");
-			PlotNumeric("k",LLL[1],HHH,Green);
+			PlotNumeric("k",LLL[1],LLL[1]+hhh-LLL,Green);
 		}
-		Else
+		Else							//------------------------------------------------------------------------------------------------5↑
 		{
 			ggg = "↑";
 			Commentary("向上");
 			PlotNumeric("k",LLL,HHH[1],red);
 		}
 	}
-	Else//(LLL==LLL[1])		    //相等
+	Else//(LLL==LLL[1])		    		//相等--左包右
 	{
-		fff =6;
+		fff =6;							
 		Commentary("左包右");
 		flag = flag+1;
-		If(LLL<LLL[flag])
+		If(LLL<LLL[flag])				//------------------------------------------------------------------------------------------------6↓
 		{
+			
 			ggg = "↓";
 			Commentary("向下");
-			PlotNumeric("k",LLL[1],HHH,Green);
+			PlotNumeric("k",LLL[1],LLL[1]+hhh-LLL,Green);
 		}
-		Else
+		Else							//------------------------------------------------------------------------------------------------6↑
 		{
 			ggg = "↑";
 			Commentary("向上");
-			PlotNumeric("k",LLL,HHH[1],red);
+			PlotNumeric("k",LLL,LLL+hhh-LLL,red);
 		}
 	}
 }
 Else //(HHH==HHH[1])	
 {
-	If(LLL<LLL[1])					//右包左
+	If(LLL<LLL[1])							//右包左
 	{
 		fff =7;
 		flag = flag+1;
-		If(LLL<LLL[flag])
+		If(LLL<LLL[flag])				//------------------------------------------------------------------------------------------------7↓
 		{
 			ggg = "↓";
 			Commentary("向下");
 			PlotNumeric("k",LLL,LLL[1],Green);
 		}
-		Else
+		Else							//------------------------------------------------------------------------------------------------7↑
 		{
 			ggg = "↑";
 			Commentary("向上");
 			PlotNumeric("k",LLL,HHH[1],red);
 		}
 	}
-	Else If (LLL>LLL[1])			//左包右
+	Else If (LLL>LLL[1])					//左包右
 	{
 		fff =8;
 		Commentary("左包右");
 		flag = flag+1;
-		If(LLL<LLL[flag])
+		If(LLL<LLL[flag])				//------------------------------------------------------------------------------------------------8↓
 		{
 			ggg = "↓";
 			Commentary("向下");
-			PlotNumeric("k",LLL[1],HHH,Green);
+			PlotNumeric("k",LLL[1],lll[1]+hhh-LLL,Green);
 		}
-		Else
+		Else							//------------------------------------------------------------------------------------------------8↑
 		{
 			ggg = "↑";
 			Commentary("向上");
 			PlotNumeric("k",LLL,HHH[1],red);
 		}
 	}
-	Else//(LLL==LLL[1])		    //相等
+	Else//(LLL==LLL[1])		    		//相等--左包右
 	{
 		fff =9;
 		Commentary("左包右");
 		flag = flag+1;
-		If(LLL<LLL[flag])
+		If(LLL<LLL[flag])//------------------------------------------------------------------------------------------------9↓
 		{
 			ggg = "↓";
 			Commentary("向下");
-			PlotNumeric("k",LLL[1],HHH,Green);
+			PlotNumeric("k",LLL[1],lll[1]+hhh-LLL,Green);
 		}
-		Else
+		Else            //------------------------------------------------------------------------------------------------9↑
 		{
 			ggg = "↑";
 			Commentary("向上");
-			PlotNumeric("k",LLL,HHH[1],red);
+			PlotNumeric("k",LLL,LLL+hhh-LLL,red);
 		}
 	}
 }
@@ -221,7 +224,15 @@ If(HHH>HHH[1] And LLL<LLL[1]) 			//左包右
 	Return;
 }
 */
-Commentary(text(flag));
+//Commentary(text(flag));
+{
+//Commentary("前底 = "+text(lll[1]));
+//Commentary("前顶 = "+text(hhh[1]));
+//Commentary("底 = "+text(lll));
+//Commentary("顶 = "+text(hhh));
+}
+PlotNumeric("1",up,0,white,0);
+PlotNumeric("2",Down,0,white,0);
 End
 
 //------------------------------------------------------------------------
