@@ -6,8 +6,8 @@
 // 输出:
 //------------------------------------------------------------------------
 Params
-Numeric up(6450);
-Numeric Down(6300);
+//Numeric up(6450);
+//Numeric Down(6300);
 Vars
 NumericSeries HHH;
 NumericSeries LLL;
@@ -224,73 +224,12 @@ Else //(HHH==HHH[1])
 	}
 }
 PlotString("fff",Text(fff)+ggg,0,IIF(fff == 1,255,IIF(fff ==4,65280,white)));
-//If (HHH == HHH[1]) PlotNumeric("kh",hhh,0,255);
-//If (LLL == LLL[1]) PlotNumeric("kl",lll,0,65280);
-/*
-If (HHH>HHH[1] And LLL>LLL[1]) 			//右超左
-{
-	
-	Commentary("右超左");
-	//PlotNumeric("k",HHH[1],HHH,255);
-	flag = 1;
-	Return;
-}
-If (HHH<HHH[1] And LLL<LLL[1]) 			//左超右	
-{
-	Commentary("左超右");
-	//PlotNumeric("k",LLL,LLL[1],65280);
-	flag = 1;
-	Return;
-}
-
-If(HHH>HHH[1] And LLL<LLL[1]) 			//右包左
-{
-	Commentary("右包左");
-	If(HHH>HHH[flag])					//向上
-	{
-		Commentary("向上");
-		//PlotNumeric("k",LLL[1],HHH,red);
-	}
-	If(LLL<LLL[flag])					//向下
-	{
-		Commentary("向下");
-		//PlotNumeric("k",LLL,HHH[1],65280);
-	}
-	flag = flag+1;
-	Return;
-}
-If(HHH>HHH[1] And LLL<LLL[1]) 			//左包右
-{
-	Commentary("左包右");
-	If(HHH>HHH[flag])					//向上
-	{
-		Commentary("向上");
-		//PlotNumeric("k",LLL,HHH[1],red);
-	}
-	If(LLL<LLL[flag])								//向下
-	{
-		Commentary("向下");
-		//PlotNumeric("k",LLL[1],HHH,65280);
-	}
-	flag = flag+1;
-	Return;
-}
-*/
-//Commentary(text(flag));
-{
-//Commentary("前底 = "+text(lll[1]));
-//Commentary("前顶 = "+text(hhh[1]));
-//Commentary("底 = "+text(lll));
-//Commentary("顶 = "+text(hhh));
-}
 Commentary("顶 = "+text(DM_H));
 Commentary("底 = "+text(DM_L));
 Commentary("柱高 = "+text(DM_H-DM_L));
-//PlotNumeric("k1",DM_L,DM_H,color);//IIF(color>0,color,white));
-//If (DM_L<>InvalidNumeric or DM_H<>InvalidNumeric) 
 PlotNumeric("k1",DM_L,DM_H,color);
-PlotNumeric("1",up,0,white,0);
-PlotNumeric("2",Down,0,white,0);
+//PlotNumeric("1",up,0,white,0);
+//PlotNumeric("2",Down,0,white,0);
 End
 
 //------------------------------------------------------------------------
