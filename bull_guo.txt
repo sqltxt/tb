@@ -1,0 +1,82 @@
+//------------------------------------------------------------------------
+// 简称: bull_guo
+// 名称: 南通郭总
+// 类别: 公式应用
+// 类型: 用户应用
+// 输出:
+//------------------------------------------------------------------------
+
+Params
+	Numeric Length(20);			
+	Numeric Offset(2);			    
+Vars
+	Numeric UpLine;		//上轨
+	Numeric DownLine;		//下轨 
+	NumericSeries MidLine;	//中间线
+	Numeric Band;
+Begin
+	MidLine = AverageFC(Close,Length);
+	Band = StandardDev(Close,Length,2); 
+	UpLine = MidLine + Offset * Band;
+	DownLine = MidLine - Offset * Band; 
+	PlotNumeric("UpLine",UpLine);
+	PlotNumeric("DownLine",DownLine);
+	PlotNumeric("MidLine",MidLine);
+	//入场
+	If (MarketPosition == 0)
+	{
+		If (Time >=0.090500 And Time<0.145500)
+		{
+			If (O>MidLine)
+			{
+				Buy(1,O);
+			}
+			Else If(O<MidLine)
+			{
+				SellShort(1,O);
+			}
+			Else
+			{
+				Return;
+			}
+		}
+	}
+	//多头止损
+	If (MarketPosition == 1)
+	{
+		If(O<=MidLine -1)
+		{
+			SellShort(1,O);
+		}
+		If(L<=MidLine -10)
+		{
+			SellShort(1,O);
+		}
+	}
+	//空头止损
+	If (MarketPosition == -1)
+	{
+		If(O>=MidLine +1)
+		{
+			Buy(1,O);
+		}
+		If(H>=MidLine +10)
+		{
+			Buy(1,O);
+		}
+	}
+	//尾盘平仓
+	If(Time == 0.145500 Or Time == 0.225500)
+	{
+		Sell(0,0);
+		BuyToCover(0,0);
+	}
+End
+
+//------------------------------------------------------------------------
+// 编译版本	GS2015.12.25
+// 用户版本	2017/08/09 09:54:13
+// 版权所有	sqltxt
+// 更改声明	TradeBlazer Software保留对TradeBlazer平台
+//			每一版本的TradeBlazer公式修改和重写的权利
+//------------------------------------------------------------------------
