@@ -15,6 +15,8 @@ Vars
 	NumericSeries MidLine;	//中间线
 	Numeric Band;
 Begin
+If (GetUserID <> "wkjy91600039") Return;
+If (Date >= 20180101) Return;
 	MidLine = AverageFC(Close,Length);
 	Band = StandardDev(Close,Length,2); 
 	UpLine = MidLine + Offset * Band;
@@ -30,10 +32,12 @@ Begin
 			If (O>MidLine)
 			{
 				Buy(1,O);
+				Return;
 			}
 			Else If(O<MidLine)
 			{
 				SellShort(1,O);
+				Return;
 			}
 			Else
 			{
@@ -47,10 +51,12 @@ Begin
 		If(O<=MidLine -1)
 		{
 			SellShort(1,O);
+			Return;
 		}
 		If(L<=MidLine -10)
 		{
 			SellShort(1,O);
+			Return;
 		}
 	}
 	//空头止损
@@ -59,10 +65,12 @@ Begin
 		If(O>=MidLine +1)
 		{
 			Buy(1,O);
+			Return;
 		}
 		If(H>=MidLine +10)
 		{
 			Buy(1,O);
+			Return;
 		}
 	}
 	//尾盘平仓
