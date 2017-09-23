@@ -1,0 +1,137 @@
+//------------------------------------------------------------------------
+// 简称: GD
+// 名称: 高低点突破
+// 类别: 公式应用
+// 类型: 用户应用
+// 输出:
+//------------------------------------------------------------------------
+
+//------------------------------------------------------------------------
+// 简称: GD
+// 名称: 
+// 类别: 公式应用
+// 类型: 用户应用
+// 输出:
+//------------------------------------------------------------------------
+
+Params
+Numeric G(16);		//G周期前高低点
+Numeric N(1);		//粘合度
+Numeric length1(10);//短周期
+Numeric length2(20);//中周期
+Numeric length3(60);//长周期
+Vars
+Numeric lot(1);
+NumericSeries HG(0);
+NumericSeries LG(0);
+Numeric HGI(0);
+Numeric LGI(0);
+Numeric MA1(0);
+Numeric MA2(0);
+Numeric MA3(0);
+
+Numeric NH(0);
+
+Numeric MA_MAX(0);
+Numeric MA_MIN(0);
+
+Begin
+//If (Date>20180301) Return;
+If (!CallAuctionFilter()) Return;
+If (BarStatus == 0)
+{
+	HG = H;
+	LG = L;
+}
+Else
+{
+	HG = Highest(H[1],G);
+	LG = Lowest(L[1],G);
+	HGI = 1+HighestBar(H[1],G);
+	lGI = 1+LowestBar(L[1],G);
+}
+
+PlotNumeric("HG",HG,0,RED);
+PlotNumeric("LG",LG,0,Green);
+
+PlotString("HGI",TEXT(HGI),HG,WHITE);
+PlotString("lGI",TEXT(lGI),LG,WHITE);
+
+MA1 = XAverage(close[1],length1);
+//PlotNumeric("MA1",MA1,0,White);
+
+MA2 = XAverage(close[1],length2);
+//PlotNumeric("MA2",MA2,0,Yellow);
+
+MA3 = XAverage(close[1],length3);
+//PlotNumeric("MA3",MA3,0,Magenta);
+
+MA_MAX = Max(MA1,MAX(MA2,MA3));
+
+MA_MIN = Min(MA1,Min(MA2,MA3));
+//NH = (Max(MA1,MAX(MA2,MA3))-Min(MA1,Min(MA2,MA3)))/Min(MA1,Min(MA2,MA3));
+NH = (MA_MAX-MA_MIN)/MA_MIN;
+
+PlotNumeric("ma_max",ma_max,0,Yellow);
+PlotNumeric("MA_MIN",MA_MIN,0,White);
+
+Commentary("粘合度"+Text(Round(nh*100,2))+"%");
+PlotString("NH",Text(Round(nh*100,2))+"%",0,white);
+
+If(MarketPosition ==0)
+{
+	If (NH*100<=N)
+	{
+		If (H>=HG )
+		{
+			Buy(lot,HG);
+			Return;
+		}
+		If (L<=LG)
+		{
+			SellShort(lot,LG);
+			Return;
+		}
+	}
+}
+If(MarketPosition ==1)
+{
+	If(L< LG)
+	{
+		Sell(lot,LG);
+		Commentary("If(L<= LG);");
+	}
+	If(L<MA_MIN)
+	{
+		Sell(lot,MA_MIN);
+		Commentary("If(L<MA_MIN)");
+	}
+}
+If(MarketPosition == -1)
+{
+	If(H>= HG)
+	{
+		BuyToCover(lot,HG);
+	}
+	If(H>MA_MAX)
+	{
+		BuyToCover(lot,MA_MAX);
+	}
+}
+End
+
+//------------------------------------------------------------------------
+// 编译版本	GS2015.12.25
+// 用户版本	2017/09/01 13:49:28
+// 版权所有	sqltxt
+// 更改声明	TradeBlazer Software保留对TradeBlazer平台
+//			每一版本的TradeBlazer公式修改和重写的权利
+//------------------------------------------------------------------------
+
+//------------------------------------------------------------------------
+// 编译版本	GS2015.12.25
+// 用户版本	2017/09/20 10:11:01
+// 版权所有	gentle
+// 更改声明	TradeBlazer Software保留对TradeBlazer平台
+//			每一版本的TradeBlazer公式修改和重写的权利
+//------------------------------------------------------------------------
