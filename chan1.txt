@@ -1,0 +1,116 @@
+//------------------------------------------------------------------------
+// 简称: Chan
+// 名称: 缠论
+// 类别: 公式应用
+// 类型: 用户应用
+// 输出:
+//------------------------------------------------------------------------
+
+Params
+//Numeric	N(5);
+Vars
+StringSeries	HL;//顶分 低分
+Numeric	X;
+NumericSeries HHH;
+NumericSeries LLL;
+NumericSeries flag;
+NumericSeries flag_h;
+NumericSeries flag_l;
+Begin
+	If (BarStatus==0)
+	{
+		HL="";
+		
+	}
+	//顶分型底分型
+	If(	H[2]<H[1] && H[1]>H )
+	{
+		If(	L[2]<L[1] && L[1]>L )
+		{
+			HL="H";//顶分型
+			//PlotNumeric("X",H[1],0,White,1);
+		}
+		Else
+		{
+			HL=HL[1];
+		}
+		
+	}
+	If(	H[2]>H[1] && H[1]<H )
+	{
+		If(	L[2]>L[1] && L[1]<L )
+		{
+			HL="L";//底分型
+			//PlotNumeric("X",L[1],0,White,1);
+		}
+		Else
+		{
+			HL=HL[1];
+		}
+		
+	}
+	//Commentary(IIFString(HL=="L","底","顶")+"分型");
+	//K线去影线
+	HHH = Max(O,C);
+	LLL = Min(O,C);
+	
+	//K线合并
+	
+	If((HHH>=HHH[1] && LLL<=LLL[1]) Or (HHH<=HHH[1] && LLL>=LLL[1]))	//	若包含关系成立
+	{
+		Commentary("包含关系成立");
+		//Unplot("K",1);							  				// 	清除前一根K线值	
+		//Commentary("清除前一根K线值");
+		//If(flag==1)												//	向上包含
+		If(HHH>=flag_h)
+		{
+			Commentary("向上包含");
+			LLL		=	MAX(LLL,LLL[1]);
+			HHH		=	MAX(HHH,HHH[1]);
+			PlotNumeric("K",LLL,HHH,White);						// 	画合并后K线
+			
+		}
+		//If(flag==-1)											//	向下包含
+		If(lll<=flag_l)
+		{
+			Commentary("向下包含");
+			LLL		=	Min(LLL,LLL[1]);
+			HHH		=	Min(HHH,HHH[1]);
+			PlotNumeric("K",LLL,HHH,White);						//	画合并后K线
+			
+		}
+	}
+	Else														//	包含关系不成立
+	{
+		Commentary("包含关系不成立");
+		LLL		=	LLL;
+		HHH		=	HHH;
+		flag_h	=	Max(open,close);
+		flag_l	=	Min(open,close);
+		PlotNumeric("K",Min(LLL,hhh),Max(lll,HHH),IIF(C>O,Red,Green));							//	画原K线
+		/*
+		If(HHH>flag_h)											//向上包含条件
+		{
+			flag 	=	1;										//标识向上包含
+			Commentary("标识向上包含");
+		}
+		If(lll<flag_l)												//向下包含条件
+		{
+			flag	=	-1;										//标识向下包含
+			Commentary("标识向下包含");
+		}
+		*/
+	}
+	Commentary("高 = "+Text(HHH));
+	Commentary("低 = "+Text(LLL));
+	
+End
+//多次合并的另一种理解：高价创新高，低价创新高
+
+//------------------------------------------------------------------------
+// 编译版本	GS2015.12.25
+// 用户版本	2017/06/21 14:33:54
+// 版权所有	wkjytj
+// 更改声明	TradeBlazer Software保留对TradeBlazer平台
+//			每一版本的TradeBlazer公式修改和重写的权利
+//------------------------------------------------------------------------
