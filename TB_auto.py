@@ -54,43 +54,45 @@ def TestEnumWindows():
     for item in windows :
         print  (windows[item])
 
-print ("Enumerating all windows...")
-TestEnumWindows()
-print (type(handle[2]))
-#print(chr(handle[2]).encode)
-#print(handle[2])
+
 
 def TBF(st1):
     windows = {}
     win32gui.EnumWindows(_MyCallback, windows)#枚举窗口
-   # for item in windows :
-        #print  (windows[item])
-        #st2 = '交易开拓者平台(旗舰版) 64位 - [工作区1-rb888 5分钟线]'
-                                #
+    s_temp = []                               #
     for t in windows.values():
         for item in windows :
             if st1 in str(t[2]):
                 if (s_temp != str(t[2])):
                     s_temp = str(t[2])                
-                    print  (s_temp)
-                                        #else:
-                                           #print("没找到"+str(windows.keys()))
-                                #return st2
+    print  (s_temp)
+    hd = win32gui.FindWindow(None,s_temp)
+    print(hex(hd))
+    print("over")
+    return hd
 
-#h=win32gui.FindWindow(None,hex(handle[2])) #int->unico:chr()
-        
+
+time.sleep(25)
 h=win32gui.FindWindow(None,'交易开拓者平台(旗舰版) 64位 -') #int->unico:chr()
 print (hex(h))
 
 h1=win32gui.FindWindow(None,'交易开拓者平台(旗舰版) 64位 - [工作区1-rb888 5分钟线]') #int->unico:chr()
 print (hex(h1))
-
+print ("Enumerating all windows...")
+TestEnumWindows()
+print (type(handle[2]))
+#print(chr(handle[2]).encode)
+#print(handle[2])
+print ("All tests done!")
 TBF('交易开拓者平台(旗舰版)')
 #_MyCallback(h,'#32770')
-time.sleep(5)
+print ("All tests done!")
 hd=win32process.GetWindowThreadProcessId (handle[2])
 print((hd[1]))
-print ("All tests done!")
+
+
+win = win32gui.FindWindow(0,TBF('交易开拓者平台(旗舰版)'))
+print (win)
 
 '''
 import win32gui
@@ -100,9 +102,9 @@ win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0)
 time.sleep(0.05) 
 win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0)
 '''
-time.sleep(2500000)
+time.sleep(15)
 
-win32process.TerminateProcess(handle[0],0)#终止进程
+win32process.TerminateProcess(TBF('交易开拓者平台(旗舰版)'),0)#终止进程
 print('关闭TB')
 '''
 import win32ui
