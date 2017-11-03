@@ -91,8 +91,9 @@ hd=win32process.GetWindowThreadProcessId (handle[2])
 print((hd[1]))
 
 
-win = win32gui.FindWindow(0,TBF('交易开拓者平台(旗舰版)'))
-print (win)
+#win = win32gui.FindWindow(0,TBF('交易开拓者平台(旗舰版)'))
+#print (win)
+
 
 '''
 import win32gui
@@ -102,9 +103,12 @@ win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0)
 time.sleep(0.05) 
 win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0)
 '''
+#time.sleep(15)
+#win32process.TerminateProcess(handle[1].handle,0)#终止进程
+time.sleep(150)
+#win32process.TerminateProcess(handle[0].handle,0)#终止进程
 time.sleep(15)
 
-win32process.TerminateProcess(TBF('交易开拓者平台(旗舰版)'),0)#终止进程
 print('关闭TB')
 '''
 import win32ui
