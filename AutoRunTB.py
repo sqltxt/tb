@@ -2,6 +2,7 @@ import win32gui
 from win32.lib import win32con
 import time
 import win32process
+import datetime
 
 def handle_window(hwnd, extra):
  if win32gui.IsWindowVisible(hwnd):
@@ -32,8 +33,13 @@ def TB_Open():
     time.sleep(25)
     
 if __name__=='__main__':
-    TB_Open()
-    time.sleep(15)
-    win32gui.EnumWindows(handle_window,None)
-    #time.sleep(1)
-    Close_DialogBox()
+    while 1:
+        if datetime.datetime.now().weekday()>0 and datetime.datetime.now().weekday()<=6:
+            if time.ctime()[12:19] == "8:50:00" or time.ctime()[12:19] == "20:50:00" :
+                TB_Open()
+                time.sleep(15)
+            if time.ctime()[12:19] == "15:35:00" or time.ctime()[12:19] == "2:35:00" :
+                win32gui.EnumWindows(handle_window,None)
+                #time.sleep(1)
+                Close_DialogBox()
+                time.sleep(10)
