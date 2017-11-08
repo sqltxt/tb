@@ -19,6 +19,8 @@ week_day = {
 path   = 'C:/Users/Administrator/Documents/tbv5321_x64_portable/'
 mylog  = path+'LOG_'+time.strftime('%Y%m%d')+'_'+week_day[datetime.datetime.now().weekday()]+'.txt'
 ExpirationDate = '2017-11-11'
+username = 'sqltxt'
+password = 'iamanothwolf'
 
 def Log(m,text):
     f = open(mylog,'a')
@@ -31,38 +33,40 @@ def handle_window(hwnd,extra):#TB句柄
             global TB
             TB = hwnd
 def Kill():
-    if "TradeBlazer.exe" in os.popen('tasklist /FI "IMAGENAME eq TradeBlazer.exe"').read():
-        os.system('TASKKILL /F /IM TradeBlazer.exe')
-        os.system('TASKKILL /F /IM TBDataCenter.exe')
-        Log('0','进程清零')
-        time.sleep(5)
+    if time.ctime()[12:19] == "8:50:00" or time.ctime()[12:19] == "20:50:00":
+        if "TradeBlazer.exe" in os.popen('tasklist /FI "IMAGENAME eq TradeBlazer.exe"').read():
+            os.system('TASKKILL /F /IM TradeBlazer.exe')
+            os.system('TASKKILL /F /IM TBDataCenter.exe')
+            Log('0','进程清零')
+            time.sleep(5)
     
-def TBStar_TBLogin(username,password):
-    #打开TB
-    handle = win32process.CreateProcess(path+'TradeBlazer.exe','',None,None,0,win32process.CREATE_NO_WINDOW,None,path,win32process.STARTUPINFO())#打开TB,获得其句柄
-    time.sleep(2)
-    Log('1','打开TB')
-    #数据重置
-    win32gui.PostMessage(win32gui.FindWindowEx(win32gui.FindWindow('#32770',None),0,'Button','数据重置'),win32con.BM_CLICK,1,0)
-    time.sleep(2)
-    win32gui.PostMessage(win32gui.FindWindowEx(win32gui.FindWindow('#32770','数据重置'),0,'Button','重置(&R)'),win32con.BM_CLICK,1,0)
-    time.sleep(2)
-    win32gui.PostMessage(win32gui.FindWindowEx(win32gui.FindWindow('#32770','确认'),0,'Button','是(&Y)'),win32con.BM_CLICK,1,0)
-    time.sleep(2)
-    win32gui.PostMessage(win32gui.FindWindowEx(win32gui.FindWindow('#32770','提示'),0,'Button','确定'),win32con.BM_CLICK,1,0)
-    time.sleep(2)
-    #登录框
-    win32gui.SendMessage(win32gui.FindWindowEx(win32gui.FindWindowEx(win32gui.FindWindow('#32770',None),0,'ComboBox',None),0,'Edit',None),win32con.WM_SETTEXT,0,username)
-    time.sleep(2)
-    win32gui.SendMessage(win32gui.FindWindowEx(win32gui.FindWindow('#32770',None),0,'Edit',None),win32con.WM_SETTEXT,0,password)
-    time.sleep(2)
-    win32gui.SendMessage(win32gui.FindWindowEx(win32gui.FindWindow('#32770',None),0,'Button','登录(&L)'),win32con.BM_CLICK,1,0)
-    Log('2','登录TB')
-    #TB句柄
-    time.sleep(10)
-    win32gui.EnumWindows(handle_window,'交易开拓者')
-    time.sleep(25)
-    
+def TBStar_TBLogin(un,pw):
+    if "TradeBlazer.exe" not in os.popen('tasklist /FI "IMAGENAME eq TradeBlazer.exe"').read():
+        #打开TB
+        handle = win32process.CreateProcess(path+'TradeBlazer.exe','',None,None,0,win32process.CREATE_NO_WINDOW,None,path,win32process.STARTUPINFO())#打开TB,获得其句柄
+        time.sleep(2)
+        Log('1','打开TB')
+        #数据重置
+        win32gui.PostMessage(win32gui.FindWindowEx(win32gui.FindWindow('#32770',None),0,'Button','数据重置'),win32con.BM_CLICK,1,0)
+        time.sleep(2)
+        win32gui.PostMessage(win32gui.FindWindowEx(win32gui.FindWindow('#32770','数据重置'),0,'Button','重置(&R)'),win32con.BM_CLICK,1,0)
+        time.sleep(2)
+        win32gui.PostMessage(win32gui.FindWindowEx(win32gui.FindWindow('#32770','确认'),0,'Button','是(&Y)'),win32con.BM_CLICK,1,0)
+        time.sleep(2)
+        win32gui.PostMessage(win32gui.FindWindowEx(win32gui.FindWindow('#32770','提示'),0,'Button','确定'),win32con.BM_CLICK,1,0)
+        time.sleep(2)
+        #登录框
+        win32gui.SendMessage(win32gui.FindWindowEx(win32gui.FindWindowEx(win32gui.FindWindow('#32770',None),0,'ComboBox',None),0,'Edit',None),win32con.WM_SETTEXT,0,un)
+        time.sleep(2)
+        win32gui.SendMessage(win32gui.FindWindowEx(win32gui.FindWindow('#32770',None),0,'Edit',None),win32con.WM_SETTEXT,0,pw)
+        time.sleep(2)
+        win32gui.SendMessage(win32gui.FindWindowEx(win32gui.FindWindow('#32770',None),0,'Button','登录(&L)'),win32con.BM_CLICK,1,0)
+        Log('2','登录TB')
+        #TB句柄
+        time.sleep(10)
+        win32gui.EnumWindows(handle_window,'交易开拓者')
+        time.sleep(25)
+        
 def TradeStar():
     win32gui.PostMessage(TB,win32con.WM_COMMAND, win32gui.GetMenuItemID(win32gui.GetSubMenu(win32gui.GetMenu(TB),0),22),0)#启动所有自动交易
     Log('3','启动交易')
@@ -128,10 +132,11 @@ def ShutdownR():
         Log('20','非WIN7系统周末不重启')
 
 def Rubber():
-    for fname in os.listdir(path):
-        if 'LOG_' in fname:
-            Log('40','清扫')
-            os.remove(path+fname)
+    if username != 'sqltxt' or username != 'gentle':
+        for fname in os.listdir(path):
+            if 'LOG_' in fname:
+                Log('40','清扫')
+                os.remove(path+fname)
     f = open(mylog,'a')
     f.write('\n')
     f.close()
@@ -146,9 +151,9 @@ def Expired():
 if __name__=='__main__':
     while 1:
         if datetime.datetime.now().weekday()<=5:
-            if time.ctime()[12:19] == "8:50:00" or time.ctime()[12:19] == "20:50:00" :
+            if (time.ctime()[12:19] >= "8:50:00" and  time.ctime()[12:19] <= "9:50:00") or (time.ctime()[12:19] >= "20:50:00" and time.ctime()[12:19] <= "21:50:00"):
                 Kill()
-                TBStar_TBLogin('sqltxt','iamanothwolf')
+                TBStar_TBLogin(username,password)
                 Expired()
                 AccountLogin_LoginFail()
                 TradeStar()
