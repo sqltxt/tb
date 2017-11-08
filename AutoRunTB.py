@@ -149,6 +149,10 @@ def Expired():
         print('即将过期')
         
 if __name__=='__main__':
+    f = open(mylog,'a')
+    f.write('\t'+datetime.datetime.now().strftime('[%H:%M:%S]')+'\tAutoRunTB启动'+'\n')
+    f.write('\n')
+    f.close()
     while 1:
         if datetime.datetime.now().weekday()<=5:
             if (85000<=int(time.strftime("%I%M%S"))<= 95000):
