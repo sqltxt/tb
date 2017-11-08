@@ -151,20 +151,20 @@ def Expired():
 if __name__=='__main__':
     while 1:
         if datetime.datetime.now().weekday()<=5:
-            if (time.ctime()[12:19] >= "8:50:00" and  time.ctime()[12:19] <= "9:50:00") or (time.ctime()[12:19] >= "20:50:00" and time.ctime()[12:19] <= "21:50:00"):
+            if (85000<=int(time.strftime("%I%M%S"))<= 95000):
                 Kill()
                 TBStar_TBLogin(username,password)
                 Expired()
                 AccountLogin_LoginFail()
                 TradeStar()
                 MonitorStar()
-            if time.ctime()[12:19] == "15:35:00" or time.ctime()[12:19] == "2:35:00" :
+            if int(time.strftime("%H%M%S") )== 153500 or int(time.strftime("%H%M%S") == 23500) :
                 SaveWorkSpace()
                 MonitorClose()
                 TradeStop()
                 TBClose()
                 Rubber()
                 time.sleep(20)
-        elif datetime.datetime.now().weekday()==6 and time.ctime()[12:19] == "12:00:00":
+        elif datetime.datetime.now().weekday()==6 and int(time.strftime("%H%M%S") == 120000) :
             ShutdownR()
         
