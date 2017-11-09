@@ -1,0 +1,3 @@
+打包python为exe：-F 单文件 -W 无命令行
+pyinstaller --version
+pyinstaller -F C:\Users\Administrator\tb\AutoRunTB.py
