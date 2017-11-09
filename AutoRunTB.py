@@ -6,6 +6,9 @@ import datetime
 from commctrl import LVM_GETITEMTEXT,LVM_GETITEMCOUNT
 import os
 import glob
+import requests
+import json
+
 week_day = {
         0: '周一',
         1: '周二',
@@ -22,10 +25,27 @@ ExpirationDate = '2017-11-11'
 username = 'sqltxt'
 password = 'iamanothwolf'
 
+def wx_msg(corp_id, secret,agentid,msg):
+    values = {'corpid' :corp_id,
+              'corpsecret':secret
+              }
+    req = requests.post('https://qyapi.weixin.qq.com/cgi-bin/gettoken',params=values)
+    token = json.loads(req.text)["access_token"]
+    #try:
+    dict_arr = {"touser": "@all",
+                "toparty": "@all",
+                "msgtype": "text",
+                "agentid": agentid,
+                "text": {"content": msg},
+                "safe": "0"}
+    data = json.dumps(dict_arr,ensure_ascii=False,indent=2,sort_keys=True).encode('utf-8')
+    reqs = requests.post("https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token="+token,data)
+    
 def Log(text):
     f = open(mylog,'a')
     f.write(str(status)+'\t'+datetime.datetime.now().strftime('[%H:%M:%S]')+'\t'+text+'\n')
     f.close()
+    wx_msg('wx87780fb826353ecc','jrZvrrQ1Q_zICTbZas651lO7p0jhxLdo3kQ0Pz2fAI_9O_H7YDGUB6qmrqE9dX0y',3,str(status)+'\t'+datetime.datetime.now().strftime('[%H:%M:%S]')+'\t'+text)
     
 def handle_window(hwnd,extra):#TB句柄
     if win32gui.IsWindowVisible(hwnd):
@@ -192,11 +212,12 @@ if __name__=='__main__':
     f.write('\n')
     f.write('\t'+datetime.datetime.now().strftime('[%H:%M:%S]')+'\tAutoRunTB启动'+'\n')
     f.close()
+    wx_msg('wx87780fb826353ecc','jrZvrrQ1Q_zICTbZas651lO7p0jhxLdo3kQ0Pz2fAI_9O_H7YDGUB6qmrqE9dX0y',3,datetime.datetime.now().strftime('[%H:%M:%S]')+'\tAutoRunTB启动')
     status = 0
     times = 0
     while 1:
         if datetime.datetime.now().weekday()<=5:
-            if (85000<=int(time.strftime("%I%M%S"))<= 115000 and status == 0):
+            if (85000<=int(time.strftime("%I%M%S"))<= 115959 and status == 0):
                 Kill()
                 TBStar_TBLogin(username,password)
                 Expired()
