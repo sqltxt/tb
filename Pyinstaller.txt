@@ -1,3 +1,11 @@
-打包python为exe：-F 单文件 -W 无命令行
+打包python为exe：-F 单文件 -w 无命令行
+
 pyinstaller --version
+
 pyinstaller -F C:\Users\Administrator\tb\AutoRunTB.py
+
+pyinstaller -F -w C:\Users\Administrator\tb\AutoRunTB.py
+
+pyinstaller -F -i C:\Users\Administrator\tb\qihuo.ico C:\Users\Administrator\tb\AutoRunTB.py
+
+打包后运行，程序一闪而过，怎么解决？把exe拖入cmd界面再执行。会打印出错信息。然后自己排查。

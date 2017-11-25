@@ -292,7 +292,7 @@ def Rubber():
     except Exception as e:
         Log(str(e))
 #导出公式并邮寄
-def Expot_fbk():
+def Export_fbk():
     while win32gui.FindWindow('#32770','导入/导出公式')==0:
         win32gui.EnumWindows(handle_window,'交易开拓者')
         if win32gui.FindWindow('#32770','自动交易头寸监控器') != 0:
@@ -347,7 +347,8 @@ if __name__=='__main__':
     global_TB.times = 0
     win32gui.EnumWindows(handle_window,'交易开拓者')
     while 1:
-        if datetime.datetime.now().weekday()<6:
+        print(datetime.datetime.now().weekday())
+        if datetime.datetime.now().weekday()<5:
             if not (23500<int(time.strftime("%H%M%S"))< 85000 or 171400<int(time.strftime("%H%M%S"))< 204500):
                 global_TB.TB_handle=0
                 win32gui.EnumWindows(handle_window,'交易开拓者')                
@@ -387,10 +388,49 @@ if __name__=='__main__':
                 print("global_TB.Monitor_handle:"+str(global_TB.Monitor_handle))
             
         else:
-            if int(time.strftime("%H%M%S")) == 235959:
+            #if int(time.strftime("%H%M%S")) == 202300:
+            if (203000<int(time.strftime("%H%M%S"))< 203500):
+                print("???")
+                global_TB.TB_handle=0
+                win32gui.EnumWindows(handle_window,'交易开拓者')                
+                global_TB.Monitor_handle = win32gui.FindWindow('#32770','自动交易头寸监控器')
+                #杀进程
+                Kill()
+                #TB未打开
+                if global_TB.TB_handle==0:
+                    TBStar_TBLogin(global_TB.username,global_TB.password)
+                else:
+                    print (global_TB.TB_handle)
+                    global_TB.Accounts = win32gui.SendMessage(win32gui.FindWindowEx(win32gui.FindWindowEx(win32gui.FindWindowEx(global_TB.TB_handle,win32gui.FindWindowEx(global_TB.TB_handle,0,'AfxControlBar110',None),'AfxControlBar110',None),0,None,'帐户管理'),0,'SysListView32',None),LVM_GETITEMCOUNT)
+                    #帐户未登录,监控器打开
+                    if global_TB.Accounts ==0 and global_TB.Monitor_handle!=0:
+                        MonitorClose()
+                    #帐户未登录,监控器关闭
+                    elif global_TB.Accounts == 0 and global_TB.Monitor_handle==0:
+                        #AccountLogin_LoginFail()
+                        TradeStar()
+                        MonitorStar()
+                    #帐户已登录,监控器关闭
+                    elif global_TB.Accounts!=0 and global_TB.Monitor_handle==0:
+                        TradeStar()
+                        MonitorStar()
+                    #帐户以及登录,监控器打开
+                    else:
+                        TradeStar()                
+            else:                
+                print('闭盘状态'+datetime.datetime.now().strftime('[%H:%M:%S]'))
+                print("global_TB.TB_handle:"+str(global_TB.TB_handle))
+                print("global_TB.Accounts:"+str(global_TB.Accounts))
+                print("global_TB.Monitor_handle:"+str(global_TB.Monitor_handle))
                 Export_fbk()#导出公式
                 sendemail.send()
                 os.remove('C:/Users/Administrator/Documents/tbv5321_x64_portable/'+str(int(time.strftime("%Y%m%d")))+'.fbk')
+                SaveWorkSpace()
+                MonitorClose()
+                TradeStop()
+                TBClose()
+                Rubber()
+                
                 print('周日快乐'+datetime.datetime.now().strftime('[%H:%M:%S]'))
                 ShutdownR()
         #TV测试

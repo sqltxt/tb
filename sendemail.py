@@ -64,7 +64,7 @@ def send():
         server.login(from_addr, password)
         server.sendmail(from_addr, [to_addr], msg.as_string())
         server.quit()
-        os.remove('C:/Users/Administrator/Documents/tbv5321_x64_portable/'+str(int(time.strftime("%Y%m%d")))+'.fbk')
+        #os.remove('C:/Users/Administrator/Documents/tbv5321_x64_portable/'+str(int(time.strftime("%Y%m%d")))+'.fbk')
         print ("发送成功")
     except smtplib.SMTPException:
         print ("无法发送邮件")
