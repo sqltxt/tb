@@ -5,80 +5,31 @@ import win32process
 import datetime
 from commctrl import LVM_GETITEMTEXT, LVM_GETITEMCOUNT
 import os
-import queue
-import requests
-import json
 import platform
 import win32api
 import global_TB
-import sendemail
+import Send_email
+import Send_weixin
+import Get_TeamViewer
 
-def wx_msg(corp_id, secret,agentid,msg):
-    values = {'corpid' :corp_id,
-              'corpsecret':secret
-              }
-    req = requests.post('https://qyapi.weixin.qq.com/cgi-bin/gettoken',params=values)
-    token = json.loads(req.text)["access_token"]
-    #try:
-    dict_arr = {"touser": "@all",
-                "toparty": "@all",
-                "msgtype": "text",
-                "agentid": agentid,
-                "text": {"content": msg},
-                "safe": "0"}
-    data = json.dumps(dict_arr,ensure_ascii=False,indent=2,sort_keys=True).encode('utf-8')
-    reqs = requests.post("https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token="+token,data)
-    
 def Log(text):
-    if global_TB.username == 'sqltxt' or global_TB.username == 'gentle':
+    if global_TB.username == 'sqltxt' or global_TB.username == 'Gentle':
         f = open(global_TB.mylog,'a')
         f.write(str(global_TB.status)+'\t'+datetime.datetime.now().strftime('[%H:%M:%S]')+'\t'+text+'\n')
         f.close()
-        wx_msg(global_TB.corp_id,global_TB.secret,global_TB.agentid,str(global_TB.status)+'\t'+datetime.datetime.now().strftime('[%H:%M:%S]')+'\t'+text)
+        Send_weixin.text(global_TB.corp_id,global_TB.secret,global_TB.agentid,str(global_TB.status)+'\t'+datetime.datetime.now().strftime('[%H:%M:%S]')+'\t'+text)
     
 def handle_window(hwnd,extra):#global_TB.TB_handle句柄
     if win32gui.IsWindowVisible(hwnd):
         if extra in win32gui.GetWindowText(hwnd):
             global_TB.TB_handle= hwnd
-
-def GetTV_Host():
-    try:
-        TV = win32gui.FindWindow('#32770','TeamViewer')
-        #print(hex(TV))
-        #win32gui.ShowWindow(TV,win32con.SW_SHOW)
-        #time.sleep(1)
-        #win32gui.ShowWindow(TV,win32con.SW_HIDE)
-        ID = win32gui.FindWindowEx(TV,0,'Edit',None)
-        #print(hex(ID))
-        PW = win32gui.FindWindowEx(TV,ID,'Edit',None)
-        #print(hex(PW))
-        
-        ID_buf_size = win32gui.SendMessage(ID, win32con.WM_GETTEXTLENGTH, 0, 0) + 1  # 要加上截尾的字节  
-        #print(buf_size)
-        ID_str_buffer = win32gui.PyMakeBuffer(win32gui.SendMessage(ID, win32con.WM_GETTEXTLENGTH, 0, 0) + 1)  # 生成buffer对象
-        #print(str_buffer)
-        win32api.SendMessage(ID, win32con.WM_GETTEXT, ID_buf_size, ID_str_buffer)  # 获取buffer  
-        ID_address, ID_length = win32gui.PyGetBufferAddressAndLen(ID_str_buffer) 
-        IDstr = win32gui.PyGetString(ID_address, ID_length) 
-        
-        PW_buf_size = win32gui.SendMessage(PW, win32con.WM_GETTEXTLENGTH, 0, 0) + 1  # 要加上截尾的字节  
-        #print(buf_size)
-        PW_str_buffer = win32gui.PyMakeBuffer(win32gui.SendMessage(PW, win32con.WM_GETTEXTLENGTH, 0, 0) + 1)  # 生成buffer对象
-        #print(str_buffer)
-        win32api.SendMessage(PW, win32con.WM_GETTEXT, PW_buf_size, PW_str_buffer)  # 获取buffer  
-        PW_address, PW_length = win32gui.PyGetBufferAddressAndLen(PW_str_buffer) 
-        PWstr = win32gui.PyGetString(PW_address, PW_length) 
-        
-        return IDstr[:-1]+'\n'+PWstr[:-1]
-    except Exception as e:
-        Log(str(e))
-
+            
 # 编号0
 def Kill():
-    global_TB.times = 0 #登录次数清零
+    #
     try:
         global_TB.status = 0
-        if 85700<=int(time.strftime("%I%M%S")) <= 85703:
+        if (85000-15)<=int(time.strftime("%I%M%S")) <= 85000:
             if "TradeBlazer.exe" in os.popen('tasklist /FI "IMAGENAME eq TradeBlazer.exe"').read():
                 os.system('TASKKILL /F /IM TradeBlazer.exe')
                 os.system('TASKKILL /F /IM TBDataCenter.exe')                
@@ -86,6 +37,7 @@ def Kill():
                 global_TB.TB_handle= 0
                 global_TB.Accounts = 0
                 global_TB.Monitor_handle = 0
+                global_TB.times = 0 #登录次数清零
                 time.sleep(5)                
     except Exception as e:
         Log(str(e))
@@ -132,22 +84,22 @@ def AccountLogin_LoginFail():
     try:
         global_TB.status = 10
         if global_TB.TB_handle!=0:
-            times=1
-            while win32gui.SendMessage(win32gui.FindWindowEx(win32gui.FindWindowEx(win32gui.FindWindowEx(global_TB.TB_handle,win32gui.FindWindowEx(global_TB.TB_handle,0,'AfxControlBar110',None),'AfxControlBar110',None),0,None,'帐户管理'),0,'SysListView32',None),LVM_GETITEMCOUNT)<1:
-                if times <150:
+            #times=1
+            if win32gui.SendMessage(win32gui.FindWindowEx(win32gui.FindWindowEx(win32gui.FindWindowEx(global_TB.TB_handle,win32gui.FindWindowEx(global_TB.TB_handle,0,'AfxControlBar110',None),'AfxControlBar110',None),0,None,'帐户管理'),0,'SysListView32',None),LVM_GETITEMCOUNT)<1:
+                if global_TB.times <150:
                     Log('柜台关闭')
                     global_TB.status = 11
                     win32gui.PostMessage(global_TB.TB_handle,win32con.WM_COMMAND, win32gui.GetMenuItemID(win32gui.GetSubMenu(win32gui.GetMenu(global_TB.TB_handle),7),17),0)#帐户登录
                     win32gui.SendMessage(win32gui.FindWindowEx(win32gui.FindWindow('#32770','帐户登录'),0,'Button','登录(&L)'),win32con.WM_ACTIVATE,win32con.WA_ACTIVE,0)#激活窗口
                     time.sleep(4)
                     win32gui.SendMessage(win32gui.FindWindowEx(win32gui.FindWindow('#32770','帐户登录'),0,'Button','登录(&L)'),win32con.BM_CLICK,1,0)
-                    times = times + 1
-                    Log(str(times)+' 次登录')
+                    global_TB.times = global_TB.times + 1
+                    Log(str(global_TB.times)+' 次登录')
                     time.sleep(15)
                     global_TB.Accounts = win32gui.SendMessage(win32gui.FindWindowEx(win32gui.FindWindowEx(win32gui.FindWindowEx(global_TB.TB_handle,win32gui.FindWindowEx(global_TB.TB_handle,0,'AfxControlBar110',None),'AfxControlBar110',None),0,None,'帐户管理'),0,'SysListView32',None),LVM_GETITEMCOUNT)
                     global_TB.Trade = 0
-                else:
-                    break;
+                #else:
+                    #break;
     except Exception as e:
         Log(str(e))
 
@@ -258,7 +210,7 @@ def TBClose():
             global_TB.TB_handle= 0
             global_TB.Accounts = 0
             global_TB.Rubber_times = 1
-            #wx_msg(global_TB.corp_id,global_TB.secret,global_TB.agentid,global_TB.username+'\n'+GetTV_Host())
+            #Send_weixin.text(global_TB.corp_id,global_TB.secret,global_TB.agentid,global_TB.username+'\n'+Get_TeamViewer.Host())
     except Exception as e:
         Log(str(e))
     global_TB.Expired_times = 0
@@ -269,17 +221,23 @@ def Expired():
     try:
         global_TB.status = 9
         if global_TB.Expired_times == 0:            
-            if datetime.datetime.now()>datetime.datetime.strptime(global_TB.ExpirationDate,"%Y-%m-%d"):
-                win32gui.MessageBox(0, '程序已经过期,请联系13299962008', '过期提示', win32con.MB_OK) 
-                print(datetime.datetime.now())
-                print("过期日"+global_TB.ExpirationDate)
+            if int(time.strftime("%Y%m%d"))>global_TB.ExpirationDate:
+                print(global_TB.ExpirationDate)
+                print(type(global_TB.ExpirationDate))
+                win32gui.MessageBox(0, '程序已经过期,请联系13299962008', '过期提示', win32con.MB_OK)
+                #time.sleep(86400)
                 try:
-                    sys.exit()
+                    print("why?????")
+                    #os._exit()
+                    #return
+                    #sys.exit()
+                    time.sleep(86400)
+                    print("wwwwwwww")
                 except:
-                    Log("过期日"+global_TB.ExpirationDate)
-            elif datetime.datetime.now()<=datetime.datetime.strptime(global_TB.ExpirationDate,"%Y-%m-%d") and datetime.datetime.strptime(global_TB.ExpirationDate,"%Y-%m-%d")-datetime.datetime.now()<datetime.timedelta(12):
+                    Log("过期日"+str(global_TB.ExpirationDate))
+            elif global_TB.ExpirationDate-12<int(time.strftime("%Y%m%d"))<global_TB.ExpirationDate:
                 win32gui.MessageBox(0, '程序即将过期,请联系13299962008', '警告', win32con.MB_OK) 
-                Log("即将过期,过期日:"+global_TB.ExpirationDate)
+                Log("即将过期,过期日:"+str(global_TB.ExpirationDate))
     except Exception as e:
         Log(str(e))
     global_TB.Expired_times = 1
@@ -294,10 +252,10 @@ def ShutdownR():
             os.system('shutdown -r')
             Log('周末重启系统')
             time.sleep(60)
-            wx_msg(global_TB.corp_id,global_TB.secret,global_TB.agentid,global_TB.username+'\n'+GetTV_Host())
+            Send_weixin.text(global_TB.corp_id,global_TB.secret,global_TB.agentid,global_TB.username+'\n'+Get_TeamViewer.Host())
         else:
             Log('非WIN7系统周末不重启')
-            wx_msg(global_TB.corp_id,global_TB.secret,global_TB.agentid,global_TB.username+'\n'+GetTV_Host())
+            Send_weixin.text(global_TB.corp_id,global_TB.secret,global_TB.agentid,global_TB.username+'\n'+Get_TeamViewer.Host())
     except Exception as e:
         Log(str(e))
 
@@ -328,12 +286,13 @@ def Export_fbk():
                 win32gui.ShowWindow(win32gui.FindWindow('#32770','自动交易头寸监控器'),win32con.SW_MINIMIZE)
                 time.sleep(1)
                 
-            win32gui.BringWindowToTop(global_TB.TB_handle)
-            win32gui.ShowWindow(win32gui.FindWindowEx(win32gui.FindWindowEx(win32gui.FindWindowEx(global_TB.TB_handle,None,'AfxControlBar110','PanelFrame'),None,0,'PanelFrame'),None,'AfxWnd110',None),win32con.SW_MAXIMIZE)
-
+            #win32gui.BringWindowToTop(global_TB.TB_handle)
+            #win32gui.ShowWindow(win32gui.FindWindowEx(win32gui.FindWindowEx(win32gui.FindWindowEx(global_TB.TB_handle,None,'AfxControlBar110','PanelFrame'),None,0,'PanelFrame'),None,'AfxWnd110',None),win32con.SW_MAXIMIZE)
+            time.sleep(1)
             win32gui.PostMessage(global_TB.TB_handle,win32con.WM_COMMAND, win32gui.GetMenuItemID(win32gui.GetSubMenu(win32gui.GetMenu(global_TB.TB_handle),1),1),0)#面板 F3
             time.sleep(3)
             pos=win32gui.GetWindowRect(win32gui.FindWindowEx(win32gui.FindWindowEx(win32gui.FindWindowEx(global_TB.TB_handle,None,'AfxControlBar110','PanelFrame'),None,0,'PanelFrame'),None,'AfxWnd110',None))
+            time.sleep(1)
             win32api.SetCursorPos([int((pos[0]+pos[2])/2),pos[3]-35])
             time.sleep(1)
             win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,0,0,0,0)
@@ -356,7 +315,7 @@ def Export_fbk():
         time.sleep(1)
         win32gui.PostMessage(win32gui.FindWindowEx(win32gui.FindWindowEx(win32gui.FindWindow('#32770','导出公式'),None,'#32770','导出公式'),None,'Button','浏览(&O)...'),win32con.BM_CLICK,1,0)
         time.sleep(1)
-        win32gui.SendMessage(win32gui.FindWindowEx(win32gui.FindWindowEx(win32gui.FindWindowEx(win32gui.FindWindowEx(win32gui.FindWindowEx(win32gui.FindWindow('#32770','保存公式备份文件'),None,'DUIViewWndClassName',None),None,'DirectUIHWND',None),None,'FloatNotifySink',None),None,'ComboBox',None),None,'Edit',None),win32con.WM_SETTEXT,0,str(int(time.strftime("%Y%m%d"))))#%H%M%S
+        win32gui.SendMessage(win32gui.FindWindowEx(win32gui.FindWindowEx(win32gui.FindWindowEx(win32gui.FindWindowEx(win32gui.FindWindowEx(win32gui.FindWindow('#32770','保存公式备份文件'),None,'DUIViewWndClassName',None),None,'DirectUIHWND',None),None,'FloatNotifySink',None),None,'ComboBox',None),None,'Edit',None),win32con.WM_SETTEXT,0,global_TB.fbk)#%H%M%S
         time.sleep(1)
         win32gui.PostMessage(win32gui.FindWindowEx(win32gui.FindWindow('#32770','保存公式备份文件'),None,'Button','保存(&S)'),win32con.BM_CLICK,1,0)
         time.sleep(1)
@@ -371,25 +330,25 @@ def StockaStaus():#盘面状态
     s = -2
     #if datetime.datetime.now().weekday()<6:#非周日
     if 0<datetime.datetime.now().weekday()<5:#周二到周五
-        if (23500<int(time.strftime("%H%M%S"))< 85000 ) or (151600<int(time.strftime("%H%M%S"))< 204500 ) : #周二到周五闭盘时间
+        if (23500<int(time.strftime("%H%M%S"))< 85000 ) or (151600<int(time.strftime("%H%M%S"))< 205000 ) : #周二到周五闭盘时间
             s = 1
         else:#开盘时间
             s = 2
-            if (90100<int(time.strftime("%I%M%S")) < 90130):#get TV
+            if (90000<int(time.strftime("%I%M%S")) < 90015):#get TV
                 s = 3
     elif datetime.datetime.now().weekday()==0:#周一
-        if (int(time.strftime("%H%M%S"))< 85000 ) or (151600<int(time.strftime("%H%M%S"))< 204500 ) : #周一闭盘时间
+        if (int(time.strftime("%H%M%S"))< 85000 ) or (151600<int(time.strftime("%H%M%S"))< 205000 ) : #周一闭盘时间
             s = 1
         else:#开盘时间
             s = 2
-            if (90100<int(time.strftime("%I%M%S")) < 90130):#get TV
+            if (90000<int(time.strftime("%I%M%S")) < 90015):#get TV
                 s = 3
     elif datetime.datetime.now().weekday()==5:#周六
         if (23500<int(time.strftime("%H%M%S"))): #周六闭盘时间
             s = 1
         else:#开盘时间
             s = 2
-            if (90100<int(time.strftime("%I%M%S")) < 90130):#get TV
+            if (90000<int(time.strftime("%I%M%S")) < 90015):#get TV
                 s = 3
     else:
         if (115000<int(time.strftime("%H%M%S"))< 115500):#周末整理
@@ -404,19 +363,21 @@ if __name__=='__main__':
     f.write('\n')
     f.write('\t'+datetime.datetime.now().strftime('[%H:%M:%S]')+'\tAutoRunTB启动'+'\n')
     f.close()
-    wx_msg(global_TB.corp_id,global_TB.secret,global_TB.agentid,datetime.datetime.now().strftime('[%H:%M:%S]')+'\tAutoRunTB启动')
+    Send_weixin.text(global_TB.corp_id,global_TB.secret,global_TB.agentid,datetime.datetime.now().strftime('[%H:%M:%S]')+'\tAutoRunTB启动')
     global_TB.status = 0
     global_TB.times = 0
     win32gui.EnumWindows(handle_window,'交易开拓者')
     while 1:
-        print(StockaStaus())
-        print(datetime.datetime.now().weekday())
+        print('星期代码：'+str(datetime.datetime.now().weekday()))
+        print('执行状态：'+str(StockaStaus()))
+        print('执行时间：'+str(int(time.strftime("%H%M%S"))))
         if StockaStaus() == 2:
             global_TB.TB_handle=0
             win32gui.EnumWindows(handle_window,'交易开拓者')                
             global_TB.Monitor_handle = win32gui.FindWindow('#32770','自动交易头寸监控器')
             #杀进程
             Kill()
+            Expired()
             #TB未打开
             if global_TB.TB_handle==0:
                 TBStar_TBLogin(global_TB.username,global_TB.password)
@@ -473,17 +434,18 @@ if __name__=='__main__':
                     MonitorStar()
                 #帐户以及登录,监控器打开
                 else:
-                    TradeStar()                
+                    TradeStar()
+            time.sleep(150)
             #else:
-        if StockaStaus() == -1:
+        #if StockaStaus() == -1:
             print('闭盘状态'+datetime.datetime.now().strftime('[%H:%M:%S]'))
             print("global_TB.TB_handle:"+str(global_TB.TB_handle))
             print("global_TB.Accounts:"+str(global_TB.Accounts))
             print("global_TB.Monitor_handle:"+str(global_TB.Monitor_handle))
             try:
                 Export_fbk()#导出公式
-                sendemail.send()#发送邮件
-                os.remove('C:/Users/Administrator/Documents/tbv5321_x64_portable/'+str(int(time.strftime("%Y%m%d")))+'.fbk')#删除文件
+                Send_email.send()#发送邮件
+                os.remove(global_TB.path+global_TB.fbk)#删除文件
             except Exception as e:
                 Log(str(e))
             SaveWorkSpace()
@@ -494,5 +456,5 @@ if __name__=='__main__':
             print('周日快乐'+datetime.datetime.now().strftime('[%H:%M:%S]'))
             ShutdownR()#系统重启
         if StockaStaus() == 3:
-            wx_msg(global_TB.corp_id,global_TB.secret,global_TB.agentid,global_TB.username+'\n'+GetTV_Host())
+            Send_weixin.text(global_TB.corp_id,global_TB.secret,global_TB.agentid,global_TB.username+'\n'+Get_TeamViewer.Host())
         time.sleep(15)
