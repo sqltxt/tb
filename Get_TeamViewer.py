@@ -28,8 +28,9 @@ def Host():
         #print(str_buffer)
         win32api.SendMessage(PW, win32con.WM_GETTEXT, PW_buf_size, PW_str_buffer)  # 获取buffer  
         PW_address, PW_length = win32gui.PyGetBufferAddressAndLen(PW_str_buffer) 
-        PWstr = win32gui.PyGetString(PW_address, PW_length) 
-        
+        PWstr = win32gui.PyGetString(PW_address, PW_length)
+        #异常代码验证
+        #Print (IDstr[:-1]+'\n'+PWstr[:-1])
         return IDstr[:-1]+'\n'+PWstr[:-1]
     except Exception as e:
         return str(e)

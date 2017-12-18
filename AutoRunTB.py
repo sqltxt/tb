@@ -2,7 +2,6 @@ import win32gui
 from win32.lib import win32con
 import time
 import win32process
-import datetime
 from commctrl import LVM_GETITEMTEXT, LVM_GETITEMCOUNT
 import os
 import platform
@@ -15,9 +14,9 @@ import Get_TeamViewer
 def Log(text):
     if global_TB.username == 'sqltxt' or global_TB.username == 'Gentle':
         f = open(global_TB.mylog,'a')
-        f.write(str(global_TB.status)+'\t'+datetime.datetime.now().strftime('[%H:%M:%S]')+'\t'+text+'\n')
+        f.write(str(global_TB.status)+'\t'+time.strftime('[%H:%M:%S]')+'\t'+text+'\n')
         f.close()
-        Send_weixin.text(global_TB.corp_id,global_TB.secret,global_TB.agentid,str(global_TB.status)+'\t'+datetime.datetime.now().strftime('[%H:%M:%S]')+'\t'+text)
+        Send_weixin.text(global_TB.corp_id,global_TB.secret,global_TB.agentid,str(global_TB.status)+'\t'+time.strftime('[%H:%M:%S]')+'\t'+text)
     
 def handle_window(hwnd,extra):#global_TB.TB_handle句柄
     if win32gui.IsWindowVisible(hwnd):
@@ -26,10 +25,9 @@ def handle_window(hwnd,extra):#global_TB.TB_handle句柄
             
 # 编号0
 def Kill():
-    #
     try:
         global_TB.status = 0
-        if (85000-15)<=int(time.strftime("%I%M%S")) <= 85000:
+        if global_TB.kill == 0:
             if "TradeBlazer.exe" in os.popen('tasklist /FI "IMAGENAME eq TradeBlazer.exe"').read():
                 os.system('TASKKILL /F /IM TradeBlazer.exe')
                 os.system('TASKKILL /F /IM TBDataCenter.exe')                
@@ -38,7 +36,8 @@ def Kill():
                 global_TB.Accounts = 0
                 global_TB.Monitor_handle = 0
                 global_TB.times = 0 #登录次数清零
-                time.sleep(5)                
+                time.sleep(5)
+        global_TB.kill = 1#已杀进程1次
     except Exception as e:
         Log(str(e))
 
@@ -252,7 +251,6 @@ def ShutdownR():
             os.system('shutdown -r')
             Log('周末重启系统')
             time.sleep(60)
-            Send_weixin.text(global_TB.corp_id,global_TB.secret,global_TB.agentid,global_TB.username+'\n'+Get_TeamViewer.Host())
         else:
             Log('非WIN7系统周末不重启')
             Send_weixin.text(global_TB.corp_id,global_TB.secret,global_TB.agentid,global_TB.username+'\n'+Get_TeamViewer.Host())
@@ -326,57 +324,73 @@ def Export_fbk():
     except Exception as e:
         Log(str(e))
         
-def StockaStaus():#盘面状态
+def StockaStaus():#盘面状态:
+    #   0:  闭盘
+    #   1:  开盘
+    #   2:  TeamViewer
+    #   3:  导出、邮件、重启
     s = -2
-    #if datetime.datetime.now().weekday()<6:#非周日
-    if 0<datetime.datetime.now().weekday()<5:#周二到周五
-        if (23500<int(time.strftime("%H%M%S"))< 85000 ) or (151600<int(time.strftime("%H%M%S"))< 205000 ) : #周二到周五闭盘时间
-            s = 1
-        else:#开盘时间
-            s = 2
-            if (90000<int(time.strftime("%I%M%S")) < 90015):#get TV
-                s = 3
-    elif datetime.datetime.now().weekday()==0:#周一
+    if int(time.strftime("%w"))==1:#周一
         if (int(time.strftime("%H%M%S"))< 85000 ) or (151600<int(time.strftime("%H%M%S"))< 205000 ) : #周一闭盘时间
-            s = 1
+            s = 0
         else:#开盘时间
-            s = 2
+            s = 1
             if (90000<int(time.strftime("%I%M%S")) < 90015):#get TV
-                s = 3
-    elif datetime.datetime.now().weekday()==5:#周六
+                s = 2
+    elif 1<int(time.strftime("%w"))<5:#周二到周五
+             if (23500<int(time.strftime("%H%M%S"))< 85000 ) or (151600<int(time.strftime("%H%M%S"))< 205000 ) : #周二到周五闭盘时间
+                 s = 0
+             else:
+                 s = 1
+                 if (90000<int(time.strftime("%I%M%S")) < 90015):#get TV
+                     s = 2
+    elif int(time.strftime("%w"))==6:#周六
         if (23500<int(time.strftime("%H%M%S"))): #周六闭盘时间
-            s = 1
+            s = 0
         else:#开盘时间
-            s = 2
+            s = 1
             if (90000<int(time.strftime("%I%M%S")) < 90015):#get TV
-                s = 3
+                s = 2
     else:
         if (115000<int(time.strftime("%H%M%S"))< 115500):#周末整理
-            s = 0
-        elif (120000<int(time.strftime("%H%M%S"))< 120030):
-            s = -1 #整理完毕
-    #s = 3 #指定s,方便调节各个模块
+            s = 3
+    #s = 0 #指定s,方便调节各个模块
     return s
         
 if __name__=='__main__':
     f = open(global_TB.mylog,'a')
     f.write('\n')
-    f.write('\t'+datetime.datetime.now().strftime('[%H:%M:%S]')+'\tAutoRunTB启动'+'\n')
+    f.write('\t'+time.strftime('[%H:%M:%S]')+'\tAutoRunTB启动'+'\n')
     f.close()
-    Send_weixin.text(global_TB.corp_id,global_TB.secret,global_TB.agentid,datetime.datetime.now().strftime('[%H:%M:%S]')+'\tAutoRunTB启动')
+    Send_weixin.text(global_TB.corp_id,global_TB.secret,global_TB.agentid,time.strftime('[%H:%M:%S]')+'\tAutoRunTB启动')
     global_TB.status = 0
     global_TB.times = 0
     win32gui.EnumWindows(handle_window,'交易开拓者')
     while 1:
-        print('星期代码：'+str(datetime.datetime.now().weekday()))
+        print('星期代码：'+time.strftime("%w"))
         print('执行状态：'+str(StockaStaus()))
-        print('执行时间：'+str(int(time.strftime("%H%M%S"))))
-        if StockaStaus() == 2:
+        print('执行时间：'+time.strftime("%H%M%S"))
+        if StockaStaus() == 0:
+                SaveWorkSpace()
+                MonitorClose()
+                TradeStop()
+                TBClose()
+                Rubber()
+                print('闭盘状态'+time.strftime('[%H:%M:%S]'))
+                print("global_TB.TB_handle:"+str(global_TB.TB_handle))
+                print("global_TB.Accounts:"+str(global_TB.Accounts))
+                print("global_TB.Monitor_handle:"+str(global_TB.Monitor_handle))
+                print("global_TB.kill:"+str(global_TB.kill))
+                global_TB.kill = 0
+                print("global_TB.kill:"+str(global_TB.kill))
+        if StockaStaus() == 1:
+            #杀进程
+            Kill()
+            #取得句柄
             global_TB.TB_handle=0
             win32gui.EnumWindows(handle_window,'交易开拓者')                
             global_TB.Monitor_handle = win32gui.FindWindow('#32770','自动交易头寸监控器')
-            #杀进程
-            Kill()
+            #过期检测
             Expired()
             #TB未打开
             if global_TB.TB_handle==0:
@@ -399,22 +413,15 @@ if __name__=='__main__':
                 #帐户以及登录,监控器打开
                 else:
                     TradeStar()                
-        if StockaStaus() == 1:
-                SaveWorkSpace()
-                MonitorClose()
-                TradeStop()
-                TBClose()
-                Rubber()
-                print('闭盘状态'+datetime.datetime.now().strftime('[%H:%M:%S]'))
-                print("global_TB.TB_handle:"+str(global_TB.TB_handle))
-                print("global_TB.Accounts:"+str(global_TB.Accounts))
-                print("global_TB.Monitor_handle:"+str(global_TB.Monitor_handle))
-        if StockaStaus() == 0:
+        if StockaStaus() == 2:
+            Send_weixin.text(global_TB.corp_id,global_TB.secret,global_TB.agentid,global_TB.username+'\n'+Get_TeamViewer.Host())
+        if StockaStaus() == 3:
+            #杀进程
+            Kill()
+            #取得句柄
             global_TB.TB_handle=0
             win32gui.EnumWindows(handle_window,'交易开拓者')                
             global_TB.Monitor_handle = win32gui.FindWindow('#32770','自动交易头寸监控器')
-            #杀进程
-            Kill()
             #TB未打开
             if global_TB.TB_handle==0:
                 TBStar_TBLogin(global_TB.username,global_TB.password)
@@ -436,9 +443,7 @@ if __name__=='__main__':
                 else:
                     TradeStar()
             time.sleep(150)
-            #else:
-        #if StockaStaus() == -1:
-            print('闭盘状态'+datetime.datetime.now().strftime('[%H:%M:%S]'))
+            print('闭盘状态'+time.strftime('[%H:%M:%S]'))
             print("global_TB.TB_handle:"+str(global_TB.TB_handle))
             print("global_TB.Accounts:"+str(global_TB.Accounts))
             print("global_TB.Monitor_handle:"+str(global_TB.Monitor_handle))
@@ -453,8 +458,7 @@ if __name__=='__main__':
             TradeStop()
             TBClose()
             Rubber()
-            print('周日快乐'+datetime.datetime.now().strftime('[%H:%M:%S]'))
+            print('周日快乐'+time.strftime('[%H:%M:%S]'))
             ShutdownR()#系统重启
-        if StockaStaus() == 3:
-            Send_weixin.text(global_TB.corp_id,global_TB.secret,global_TB.agentid,global_TB.username+'\n'+Get_TeamViewer.Host())
+
         time.sleep(15)
