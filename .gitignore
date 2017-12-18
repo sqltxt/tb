@@ -34,7 +34,6 @@
 *.egg
 *.egg-info
 *.spec
-*.ico
 dist
 build
 __pycache__
