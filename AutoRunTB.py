@@ -331,21 +331,21 @@ def StockaStaus():#盘面状态:
     #   3:  导出、邮件、重启
     s = -2
     if int(time.strftime("%w"))==1:#周一
-        if (int(time.strftime("%H%M%S"))< 85000 ) or (151600<int(time.strftime("%H%M%S"))< 205000 ) : #周一闭盘时间
+        if (int(time.strftime("%H%M%S"))< 85000 ) or (151800<int(time.strftime("%H%M%S"))< 205000 ) : #周一闭盘时间
             s = 0
         else:#开盘时间
             s = 1
             if (90000<int(time.strftime("%I%M%S")) < 90015):#get TV
                 s = 2
     elif 1<int(time.strftime("%w"))<5:#周二到周五
-             if (23500<int(time.strftime("%H%M%S"))< 85000 ) or (151600<int(time.strftime("%H%M%S"))< 205000 ) : #周二到周五闭盘时间
+             if (23200<int(time.strftime("%H%M%S"))< 85000 ) or (151800<int(time.strftime("%H%M%S"))< 205000 ) : #周二到周五闭盘时间
                  s = 0
              else:
                  s = 1
                  if (90000<int(time.strftime("%I%M%S")) < 90015):#get TV
                      s = 2
     elif int(time.strftime("%w"))==6:#周六
-        if (23500<int(time.strftime("%H%M%S"))): #周六闭盘时间
+        if (23200<int(time.strftime("%H%M%S"))): #周六闭盘时间
             s = 0
         else:#开盘时间
             s = 1
