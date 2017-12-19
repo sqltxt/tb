@@ -13,7 +13,6 @@ corp_id = 'wx87780fb826353ecc'
 secret = 'zOTGHqMW_R01vX9ij2MKTNdg49x0f-UDT3h_CwYxcVo'
 agentid = 1000004
 '''
-
 week_day = {
         1: '周一',
         2: '周二',
